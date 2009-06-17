@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -16,13 +17,14 @@ import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.listener.MenuClickListener;
 import com.next.common.client.panels.GenericPanel;
+import com.next.common.client.panels.generic.CommonPanel;
 import com.next.common.client.panels.generic.FieldTypes;
 import com.next.common.client.panels.generic.FieldsBean;
 import com.next.common.client.panels.generic.ListBoxPopulator;
 
 public class ScreenManager {
 
-	private static Map<String, Panel> allPanels = new HashMap<String, Panel>();
+	private static Map<String, CommonPanel> allPanels = new HashMap<String, CommonPanel>();
 	private static Map<String,EntityDescriptionBean> entityDefnitionBeanMap = new HashMap<String, EntityDescriptionBean>();
 	private static VerticalPanel mainScreen = null;
 	private static VerticalPanel screen = null;
@@ -45,7 +47,7 @@ public class ScreenManager {
 
 		mainScreen.add(menuScreen);
 	    mainScreen.add(screen);
-	    RootPanel.get().add(mainScreen);
+		RootPanel.get("content").add(mainScreen);
 	}
 	public static void createMainScreen(EntityDescriptionBean[] entityDefnitionBeans)
 	{
@@ -65,6 +67,15 @@ public class ScreenManager {
 		        entityMenu.addItem(entityDefnitionBeans[i].getEntityName(), new MenuClickListener(entityDefnitionBeans[i].getEntityName()));
 		        entityDefnitionBeanMap.put(entityDefnitionBeans[i].getEntityName(), entityDefnitionBeans[i]);
 		    }
+	    }
+	    else{
+	        entityMenu.addItem("No Entity Configured", new Command(){
+				@Override
+				public void execute() {
+					Window.alert("Configure entites from Admin menu");
+				}
+	        	
+	        });
 	    }
 
 	    // Create the Admin menu
@@ -87,7 +98,7 @@ public class ScreenManager {
 	}
 	public static void showMenuPanel(String text)
 	{
-		Panel currentPanel = allPanels.get(text);
+		CommonPanel currentPanel = allPanels.get(text);
 		if(currentPanel  == null)
 		{
 			EntityDescriptionBean bean = entityDefnitionBeanMap.get(text);
@@ -105,6 +116,7 @@ public class ScreenManager {
 				}
 			}
 			currentPanel = new GenericPanel(text,(FieldsBean[])allFields.toArray(new FieldsBean[0]));
+			currentPanel.createPanel();
 			allPanels.put(text, currentPanel);
 		}
 		
