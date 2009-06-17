@@ -102,22 +102,23 @@ public class ScreenManager {
 		if(currentPanel  == null)
 		{
 			EntityDescriptionBean bean = entityDefnitionBeanMap.get(text);
-			if(bean == null)
-				return;
-			List<FieldsBean> allFields = new ArrayList<FieldsBean>();
-			String[] fields = bean.getEntityFields();
-			if(fields != null)
+			if(bean != null)
 			{
-				FieldsBean oneFieldsBean;
-				for(String oneField:fields)
+				List<FieldsBean> allFields = new ArrayList<FieldsBean>();
+				String[] fields = bean.getEntityFields();
+				if(fields != null)
 				{
-					oneFieldsBean = new FieldsBean(FieldTypes.TEXT_BOX,oneField,oneField,true,null);
-					allFields.add(oneFieldsBean);
+					FieldsBean oneFieldsBean;
+					for(String oneField:fields)
+					{
+						oneFieldsBean = new FieldsBean(FieldTypes.TEXT_BOX,oneField,oneField,true,null);
+						allFields.add(oneFieldsBean);
+					}
 				}
+				currentPanel = new GenericPanel(text,(FieldsBean[])allFields.toArray(new FieldsBean[0]));
+				currentPanel.createPanel();
+				allPanels.put(text, currentPanel);
 			}
-			currentPanel = new GenericPanel(text,(FieldsBean[])allFields.toArray(new FieldsBean[0]));
-			currentPanel.createPanel();
-			allPanels.put(text, currentPanel);
 		}
 		
 		if(currentPanel != null)
