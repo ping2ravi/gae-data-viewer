@@ -15,6 +15,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.next.common.client.beans.EntityDefnitionBean;
+import com.next.common.client.beans.EntityDescriptionBean;
+import com.next.common.client.callback.DefaultAsyncCallback;
+import com.next.common.client.factory.ServiceFactory;
 import com.next.common.client.panels.FunctionPanel;
 import com.next.common.client.panels.generic.CommonPanel;
 
@@ -40,6 +44,20 @@ public class GWTCommon implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		String key = "getAllEntities";
+		DefaultAsyncCallback<EntityDescriptionBean[]> callback = new DefaultAsyncCallback<EntityDescriptionBean[]>(key){
+			@Override
+			public void onServiceFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void onServiceSuccess(EntityDescriptionBean[] result) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		ServiceFactory.getDBService().getAllEntities(callback);
 		FunctionPanel functionPanel = new FunctionPanel();
 		functionPanel.createPanel();
 		functionPanel.add(new Label("Sharma"));

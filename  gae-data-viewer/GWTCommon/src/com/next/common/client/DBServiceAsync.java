@@ -6,7 +6,7 @@ import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.beans.EntityRowBean;
 
 public interface DBServiceAsync {
-	public void getAllEntities(AsyncCallback<EntityDefnitionBean[]> callback);
+	public void getAllEntities(AsyncCallback<EntityDescriptionBean[]> callback);
 	public void createEntity(EntityDefnitionBean entity,AsyncCallback<EntityDefnitionBean > callback);
 	public void updateEntity(EntityDefnitionBean entity,AsyncCallback<EntityDefnitionBean> callback);
 	public void deleteEntity(Long id,AsyncCallback callback);

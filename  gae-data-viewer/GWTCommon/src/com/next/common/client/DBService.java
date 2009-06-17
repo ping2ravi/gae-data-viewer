@@ -7,7 +7,7 @@ import com.next.common.client.beans.EntityRowBean;
 
 public interface DBService extends RemoteService {
 
-	public EntityDefnitionBean[] getAllEntities();
+	public EntityDescriptionBean[] getAllEntities();
 	public EntityDefnitionBean createEntity(EntityDefnitionBean entity);
 	public EntityDefnitionBean updateEntity(EntityDefnitionBean entity);
 	public void deleteEntity(Long id);
