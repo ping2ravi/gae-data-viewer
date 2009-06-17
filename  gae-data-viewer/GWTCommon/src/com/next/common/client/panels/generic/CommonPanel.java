@@ -133,9 +133,12 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			{*/
 				CommonSavePanel savePanel = new CommonSavePanel(this, fields);
 				savePanel.createSavePanel();
-				savePanel.setModal(true);
-				//savePanel.center(); This is a bug, if its uncommented it will not show the panel.
+				savePanel.setModal(false);
+				savePanel.setAutoHideEnabled(true);
+				
+				savePanel.center(); //This is a bug, if its uncommented it will not show the panel.
 				savePanel.show();
+				
 			/*}
 			else
 			{
