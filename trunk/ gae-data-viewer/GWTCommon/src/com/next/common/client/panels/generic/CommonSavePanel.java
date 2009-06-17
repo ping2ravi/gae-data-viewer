@@ -6,7 +6,6 @@ import java.util.Map;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -21,11 +20,12 @@ public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel
 	private CommonPanel panel;
 	public CommonSavePanel(CommonPanel panel,FieldsBean[] fields)
 	{	
+		super(true);
 		this.panel = panel;
 		super.setWidth("400px");
 		super.setHeight("400px");
-	
 		this.fields = fields;
+		this.ensureDebugId("cwBasicPopup-simplePopup");
 		elements = new HashMap<String, Widget>();
 	}
 	public void createSavePanel()
@@ -86,13 +86,11 @@ public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel
 			value = FieldTypes.getWidgetValue(fields[i].getType(),widget);
 			data.put(fields[i].getFieldName(),value);
 		}		
-		/*
 		Object obj = panel.getObjectFromParams(data);
 		if(panel.validateObject(obj,this))
 		{
 			panel.onSave(obj);
 		}
-		*/
 	}
 	@Override
 	public void setErrorMessage(String message) {
