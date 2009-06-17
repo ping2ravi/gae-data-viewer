@@ -28,7 +28,7 @@ public class ReflectionUtil {
 				continue;
 			if(allMethods[i].getName().equals("getClass"))
 				continue;
-			allFields.add(allMethods[i].getName());
+			allFields.add(allMethods[i].getName().substring(3));
 		}
 		return (String[])allFields.toArray(new String[0]);
 	}

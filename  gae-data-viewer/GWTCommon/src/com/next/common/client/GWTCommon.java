@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -19,6 +20,7 @@ import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.callback.DefaultAsyncCallback;
 import com.next.common.client.factory.ServiceFactory;
+import com.next.common.client.manager.ScreenManager;
 import com.next.common.client.panels.FunctionPanel;
 import com.next.common.client.panels.generic.CommonPanel;
 
@@ -49,18 +51,14 @@ public class GWTCommon implements EntryPoint {
 			@Override
 			public void onServiceFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+				Window.alert("failed " + caught.getMessage() + ":" + caught);
 			}
 			@Override
 			public void onServiceSuccess(EntityDescriptionBean[] result) {
-				// TODO Auto-generated method stub
+				ScreenManager.createMainScreen(null);
 				
 			}
 		};
 		ServiceFactory.getDBService().getAllEntities(callback);
-		FunctionPanel functionPanel = new FunctionPanel();
-		functionPanel.createPanel();
-		functionPanel.add(new Label("Sharma"));
-		RootPanel.get("content").add(functionPanel);
 	}
 }

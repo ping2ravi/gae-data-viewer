@@ -12,6 +12,10 @@
   
   <!-- Servlets -->
   <servlet>
+    <servlet-name>DBServlet</servlet-name>
+    <servlet-class>com.next.common.server.DBServicesImpl</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>com.next.common.server.GreetingServiceImpl</servlet-class>
   </servlet>
@@ -19,6 +23,10 @@
         <servlet-name>sign</servlet-name>
         <servlet-class>com.next.common.server.SignGuestbookServlet</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>DBServlet</servlet-name>
+        <url-pattern>/gwtcommon/common</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>sign</servlet-name>
         <url-pattern>/sign</url-pattern>
