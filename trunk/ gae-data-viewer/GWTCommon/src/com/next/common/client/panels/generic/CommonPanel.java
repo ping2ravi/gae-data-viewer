@@ -88,7 +88,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			if(FieldTypes.LIST_BOX.equals(fields[i].getType()))
 			{
 				if(fields[i].getListBoxPopulator() != null)
-					fields[i].getListBoxPopulator().populateListBox((ListBox)widget);
+					fields[i].getListBoxPopulator().populateListBox((ListBox)widget,this);
 				else
 					Window.alert("No List box populator is defined");
 			}

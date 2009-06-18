@@ -47,7 +47,7 @@ public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel
 			if(FieldTypes.LIST_BOX.equals(fields[i].getType()))
 			{
 				if(fields[i].getListBoxPopulator() != null)
-					fields[i].getListBoxPopulator().populateListBox((ListBox)widget);
+					fields[i].getListBoxPopulator().populateListBox((ListBox)widget,null);
 				else
 					Window.alert("No List box populator is defined");
 			}
