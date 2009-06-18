@@ -1,5 +1,10 @@
 package com.next.common.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jdo.PersistenceManager;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.next.common.client.DBService;
 import com.next.common.client.beans.EntityDefnitionBean;
@@ -7,16 +12,34 @@ import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.beans.EntityRowBean;
 import com.next.common.client.exceptions.ClientException;
 import com.next.common.server.entity.Customer;
+import com.next.common.server.entity.EntityDefnition;
 import com.next.common.server.entity.Greeting;
+import com.next.common.server.entity.helper.DBManager;
+import com.next.common.server.entity.helper.EntityHelper;
+import com.next.common.server.entity.helper.JDOManager;
 import com.next.common.server.exceptions.NoSuchENtity;
+import com.next.common.server.util.PMF;
 import com.next.common.server.util.ReflectionUtil;
 
 public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 
 	@Override
 	public EntityDefnitionBean createEntity(EntityDefnitionBean entity) {
-		// TODO Auto-generated method stub
-		return null;
+		DBManager dbManager = getDBManager();
+		try{
+			EntityDefnition entityDefnition = new EntityDefnition();
+			entityDefnition.setKeyField(entity.getKeyField());
+			entityDefnition.setName(entity.getName());
+			entityDefnition = EntityHelper.getInstance().createEntityDefnition(dbManager, entityDefnition);
+			entity.setId(entityDefnition.getId());
+			dbManager.commitTransaction();
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			dbManager.rollbackTransaction();
+		}
+		
+		return entity;
 	}
 
 	@Override
@@ -27,8 +50,15 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 
 	@Override
 	public void deleteEntity(Long id) {
-		// TODO Auto-generated method stub
-		
+		DBManager dbManager = getDBManager();
+		try{
+			EntityHelper.getInstance().deleteEntityDefnition(dbManager, id);
+			dbManager.commitTransaction();
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			dbManager.rollbackTransaction();
+		}
 	}
 
 	@Override
@@ -45,22 +75,28 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 
 	@Override
 	public EntityDescriptionBean[] getAllEntities() throws ClientException {
-		EntityDescriptionBean[] allEntities = new EntityDescriptionBean[2];
+		DBManager dbManager = null;
+		List<EntityDescriptionBean> allReturnedEntityBeans = new ArrayList<EntityDescriptionBean>();
 		try {
-		allEntities[0] = new EntityDescriptionBean();
-		allEntities[0].setId(1L);
-		allEntities[0].setEntityName(Customer.class.getName());
-		allEntities[0].setEntityFields(ReflectionUtil.getClassFields(Customer.class.getName()));
-		allEntities[1] = new EntityDescriptionBean();
-		allEntities[1].setId(1L);
-		allEntities[1].setEntityName(Greeting.class.getName());
-		allEntities[1].setEntityFields(ReflectionUtil.getClassFields(Greeting.class.getName()));
+			dbManager = getDBManager();
+			List<EntityDefnition> allEntites = EntityHelper.getInstance().findEntityDefnition(dbManager, null);
+			
+			EntityDescriptionBean beans;
+			for(EntityDefnition oneBean : allEntites)
+			{
+				beans = new EntityDescriptionBean();
+				beans.setId(oneBean.getId());
+				beans.setEntityName(oneBean.getName());
+				beans.setEntityFields(ReflectionUtil.getClassFields(oneBean.getName()));
+				allReturnedEntityBeans.add(beans);
+			}
+			dbManager.commitTransaction();
 		} catch (NoSuchENtity e) {
-			// TODO Auto-generated catch block
+			dbManager.rollbackTransaction();
 			e.printStackTrace();
 			throw new ClientException(e);
 		}
-		return allEntities;
+		return (EntityDescriptionBean[])allReturnedEntityBeans.toArray(new EntityDescriptionBean[0]);
 	}
 
 	@Override
@@ -71,8 +107,21 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 
 	@Override
 	public EntityDefnitionBean updateEntity(EntityDefnitionBean entity) {
-		// TODO Auto-generated method stub
-		return null;
+		DBManager dbManager = getDBManager();
+		try{
+			EntityDefnition entityDefnition = EntityHelper.getInstance().getEntityDefnitionById(dbManager, entity.getId());
+			entityDefnition.setKeyField(entity.getKeyField());
+			entityDefnition.setName(entity.getName());
+			//entityDefnition = EntityHelper.getInstance().updateEntityDefnition(dbManager, entityDefnition);
+			entity.setId(entityDefnition.getId());
+			dbManager.commitTransaction();
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			dbManager.rollbackTransaction();
+		}
+		
+		return entity;
 	}
 
 	@Override
@@ -81,4 +130,65 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 		return null;
 	}
 
+	@Override
+	public EntityDefnitionBean[] findAllEntity(String entityName) {
+		
+		DBManager dbManager = getDBManager();
+		EntityDefnition searchCriteria = new EntityDefnition();
+		searchCriteria.setName(entityName);
+		List<EntityDefnition> allEntites = EntityHelper.getInstance().findEntityDefnition(dbManager, searchCriteria);
+		List<EntityDefnitionBean> allReturnedEntityBeans = new ArrayList<EntityDefnitionBean>();
+		
+		EntityDefnitionBean beans;
+		for(EntityDefnition oneBean : allEntites)
+		{
+			beans = new EntityDefnitionBean();
+			beans.setId(oneBean.getId());
+			beans.setName(oneBean.getName());
+			beans.setKeyField(oneBean.getKeyField());
+			allReturnedEntityBeans.add(beans);
+		}
+		dbManager.commitTransaction();
+		return (EntityDefnitionBean[])allReturnedEntityBeans.toArray(new EntityDefnitionBean[0]);
+	}
+
+	@Override
+	public EntityDescriptionBean getEntityDescription(String className) throws ClientException{
+		EntityDescriptionBean entity = new EntityDescriptionBean();
+		try{
+			entity.setEntityName(className);
+			entity.setEntityFields(ReflectionUtil.getClassFields(className));
+		}catch(NoSuchENtity ex)
+		{
+			throw new ClientException(ex);
+		}
+		return entity;
+	}
+
+	public DBManager getDBManager()
+	{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		pm.currentTransaction().begin();
+		DBManager dBManager = new JDOManager(pm);
+		return dBManager;
+	}
+
+	@Override
+	public String[] deleteEntity(String[] entities) {
+		DBManager dbManager = getDBManager();
+		try{
+			Long id;
+			for(String oneEntry:entities)
+			{
+				id = Long.parseLong(oneEntry);
+				EntityHelper.getInstance().deleteEntityDefnition(dbManager, id);
+			}
+			dbManager.commitTransaction();
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			dbManager.rollbackTransaction();
+		}
+		return entities;
+	}
 }

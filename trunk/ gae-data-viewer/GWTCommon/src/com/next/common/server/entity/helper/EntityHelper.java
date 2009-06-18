@@ -1,5 +1,7 @@
 package com.next.common.server.entity.helper;
 
+import java.util.List;
+
 import com.next.common.server.entity.EntityDefnition;
 
 public class EntityHelper {
@@ -19,12 +21,20 @@ public class EntityHelper {
 	{
 		return (EntityDefnition)dbManager.createObject(entityDefnition);
 	}
+	public EntityDefnition getEntityDefnitionById(DBManager dbManager,Long id)
+	{
+		return (EntityDefnition)dbManager.getObjectById(EntityDefnition.class, id);
+	}
 	public EntityDefnition updateEntityDefnition(DBManager dbManager,EntityDefnition entityDefnition)
 	{
 		return (EntityDefnition)dbManager.updateObject(entityDefnition);
 	}
 	public void deleteEntityDefnition(DBManager dbManager,Long id)
 	{
-		dbManager.deleteObjectById(id);
+		dbManager.deleteObjectById(EntityDefnition.class,id);
+	}
+	public List findEntityDefnition(DBManager dbManager,EntityDefnition entity)
+	{
+		return dbManager.runQuery(EntityDefnition.class, entity);
 	}
 }

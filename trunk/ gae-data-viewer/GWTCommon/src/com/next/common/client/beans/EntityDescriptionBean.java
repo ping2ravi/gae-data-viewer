@@ -6,6 +6,7 @@ public class EntityDescriptionBean implements Serializable {
 
 	private Long id;
 	private String entityName;
+	private String keyField;
 	private String[] entityFields;
 	public Long getId() {
 		return id;

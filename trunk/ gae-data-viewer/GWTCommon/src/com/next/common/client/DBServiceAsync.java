@@ -15,5 +15,8 @@ public interface DBServiceAsync {
 	public void updateEntityData(EntityRowBean entity,AsyncCallback<EntityRowBean> callback);
 	public void deleteEntityData(EntityRowBean entity,AsyncCallback callback);
 	public void findEntityData(AsyncCallback<EntityRowBean[]> callback);
+	public void findAllEntity(String entityName,AsyncCallback<EntityDefnitionBean[]> callback);
+	public void getEntityDescription(String className,AsyncCallback<EntityDescriptionBean> callback);
+	public void deleteEntity(String[] entities,AsyncCallback<String[]> callback);
 
 }
