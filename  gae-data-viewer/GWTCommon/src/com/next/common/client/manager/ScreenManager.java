@@ -16,7 +16,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.listener.MenuClickListener;
+import com.next.common.client.panels.EntityPanel;
 import com.next.common.client.panels.GenericPanel;
+import com.next.common.client.panels.MainEntityPanel;
 import com.next.common.client.panels.generic.CommonPanel;
 import com.next.common.client.panels.generic.FieldTypes;
 import com.next.common.client.panels.generic.FieldsBean;
@@ -24,11 +26,12 @@ import com.next.common.client.panels.generic.ListBoxPopulator;
 
 public class ScreenManager {
 
-	private static Map<String, CommonPanel> allPanels = new HashMap<String, CommonPanel>();
+	private static Map<String, Panel> allPanels = new HashMap<String, Panel>();
 	private static Map<String,EntityDescriptionBean> entityDefnitionBeanMap = new HashMap<String, EntityDescriptionBean>();
 	private static VerticalPanel mainScreen = null;
 	private static VerticalPanel screen = null;
 	private static VerticalPanel menuScreen = null;
+	private static EntityPanel entityPanel = null;
 	static{
 		menuScreen = new VerticalPanel();
 		menuScreen.setWidth("100%");
@@ -82,7 +85,7 @@ public class ScreenManager {
 	    
 	    MenuBar adminMenu = new MenuBar(true);
 	    menu.addItem(new MenuItem("Admin", adminMenu));
-	    String[] adminOptions = {"Edit Entity"};
+	    String[] adminOptions = {"Entities"};
 	    for (int i = 0; i < adminOptions.length; i++) {
 	      adminMenu.addItem(adminOptions[i], new MenuClickListener(adminOptions[i]));
 	    }
@@ -98,7 +101,7 @@ public class ScreenManager {
 	}
 	public static void showMenuPanel(String text)
 	{
-		CommonPanel currentPanel = allPanels.get(text);
+		Panel currentPanel = allPanels.get(text);
 		if(currentPanel  == null)
 		{
 			EntityDescriptionBean bean = entityDefnitionBeanMap.get(text);
@@ -116,8 +119,15 @@ public class ScreenManager {
 					}
 				}
 				currentPanel = new GenericPanel(text,(FieldsBean[])allFields.toArray(new FieldsBean[0]));
-				currentPanel.createPanel();
+				((CommonPanel)currentPanel).createPanel();
 				allPanels.put(text, currentPanel);
+			}
+			else{
+				if("Entities".equals(text))
+				{
+					currentPanel = new MainEntityPanel();
+					allPanels.put(text, currentPanel);
+				}
 			}
 		}
 		
@@ -130,6 +140,14 @@ public class ScreenManager {
 		{
 			Window.alert("Clicked on " + text +", which is not implemented yet");
 		}
+		
+	}
+	public static String[] getEntityFields(String entityName)
+	{
+		EntityDescriptionBean entity = entityDefnitionBeanMap.get(entityName);
+		if(entity == null)
+			return null;
+		return entity.getEntityFields();
 		
 	}
 }
