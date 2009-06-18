@@ -22,7 +22,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	private Button clear = new Button("Clear");
 	private Button newButton = new Button("New");
 	private HTML errorText = new HTML();
-	private Map<String, Widget> searchElements;
+	protected Map<String, Widget> searchElements;
 	String objectName;
 	private Grid resultGrid;
 	private VerticalPanel resultPanel;
@@ -40,7 +40,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	public abstract Object getObjectFromParams(Map<String, String> params);
 	public abstract boolean validateObject(Object obj,UiErrorPanel parentPanel);
 	public abstract void onSave(Object object);
-	public abstract void findData(Object object);
+	public abstract void findData(Map searchData);
 	public FieldsBean[] getFields() {
 		return fields;
 	}
@@ -119,7 +119,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 				resultPanel.clear();
 				resultPanel.add(new Label("Searching Data"));
 				Map<String, String> params = getSearchParams();
-				//findData(params);
+				findData(params);
 			/*}
 			else
 			{

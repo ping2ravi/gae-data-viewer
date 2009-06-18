@@ -7,6 +7,7 @@ package com.next.common.client.panels;
 
 import java.util.Map;
 
+import com.next.common.client.factory.ServiceFactory;
 import com.next.common.client.panels.generic.CommonPanel;
 import com.next.common.client.panels.generic.FieldsBean;
 import com.next.common.client.panels.generic.UiErrorPanel;
@@ -43,8 +44,10 @@ public class GenericPanel extends CommonPanel{
     }
 
     @Override
-    public void findData(Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void findData(Map searchData) {
+        //get the search criteria
+    	ServiceFactory.getDBService().findEntityData(callback)
+    	
     }
 
 }

@@ -2,6 +2,7 @@ package com.next.common.server.entity.helper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -73,6 +74,42 @@ public class JDOManager implements DBManager{
 	public void rollbackTransaction() {
 		pm.currentTransaction().rollback();
 		pm.close();
+	}
+	@Override
+	public List runQuery(Class cls, Map<String, String> crit) {
+		Query query;
+		List returnResults = new ArrayList();
+		if(crit != null)
+		{
+			String criteria = null;
+			String value;
+			for(String key:crit.keySet())
+			{
+				value = crit.get(key);
+				if(value == null || "".equals(value.trim()))
+					continue;
+				if(criteria == null)
+					criteria = key +"=='" + value+"' ";
+				else
+					criteria = criteria + " and " + key +"=='" + value+"' ";
+			}
+			System.out.println("Criteria is " +criteria);
+			query = pm.newQuery(cls,criteria);
+		}
+		else
+			query = pm.newQuery(cls);
+		
+
+	    try {
+	        List results = (List) query.execute();
+	        for(Object obj:results)
+	        {
+	        	returnResults.add(obj);
+	        }
+	    } finally {
+	        query.closeAll();
+	    }
+	    return returnResults;
 	}
 
 }
