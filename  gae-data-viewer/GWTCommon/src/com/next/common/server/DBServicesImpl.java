@@ -1,7 +1,9 @@
 package com.next.common.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 
@@ -10,12 +12,14 @@ import com.next.common.client.DBService;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.beans.EntityRowBean;
+import com.next.common.client.beans.EntitySearchCriteria;
 import com.next.common.client.exceptions.ClientException;
 import com.next.common.server.entity.Customer;
 import com.next.common.server.entity.EntityDefnition;
 import com.next.common.server.entity.Greeting;
 import com.next.common.server.entity.helper.DBManager;
 import com.next.common.server.entity.helper.EntityHelper;
+import com.next.common.server.entity.helper.GenericEntityHelper;
 import com.next.common.server.entity.helper.JDOManager;
 import com.next.common.server.exceptions.NoSuchENtity;
 import com.next.common.server.util.PMF;
@@ -68,8 +72,11 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 	}
 
 	@Override
-	public EntityRowBean[] findEntityData() {
-		// TODO Auto-generated method stub
+	public EntityRowBean[] findEntityData(EntitySearchCriteria searchBean) {
+		GenericEntityHelper geh = GenericEntityHelper.getInstance();
+		DBManager dbManager = getDBManager();
+		Map<String, String> searchParams = new HashMap<String, String>();
+		geh.findGenericEntity(dbManager, searchBean.getEntityName(), searchParams);
 		return null;
 	}
 

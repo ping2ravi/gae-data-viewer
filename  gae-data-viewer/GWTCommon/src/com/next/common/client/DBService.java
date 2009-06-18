@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.beans.EntityRowBean;
+import com.next.common.client.beans.EntitySearchCriteria;
 import com.next.common.client.exceptions.ClientException;
 
 public interface DBService extends RemoteService {
@@ -17,7 +18,7 @@ public interface DBService extends RemoteService {
 	public EntityRowBean createEntityData(EntityRowBean entity);
 	public EntityRowBean updateEntityData(EntityRowBean entity);
 	public void deleteEntityData(EntityRowBean entity);
-	public EntityRowBean[] findEntityData();
+	public EntityRowBean[] findEntityData(EntitySearchCriteria searchBean);
 	public EntityDefnitionBean[] findAllEntity(String entityName);
 	public EntityDescriptionBean getEntityDescription(String className)  throws ClientException;
 }

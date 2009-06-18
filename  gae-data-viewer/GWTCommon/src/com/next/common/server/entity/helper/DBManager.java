@@ -1,6 +1,7 @@
 package com.next.common.server.entity.helper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DBManager {
 
@@ -10,6 +11,7 @@ public interface DBManager {
 	public void deleteObject(Object obj);
 	public Object getObjectById(Class cls,Long id);
 	public List runQuery(Class cls,Criteria crit);
+	public List runQuery(Class cls,Map<String, String> crit);
 	public void commitTransaction();
 	public void rollbackTransaction();
 }
