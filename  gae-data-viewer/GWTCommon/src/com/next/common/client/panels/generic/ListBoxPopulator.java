@@ -4,5 +4,5 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public interface ListBoxPopulator {
 
-	public void populateListBox(ListBox listBox);
+	public void populateListBox(ListBox listBox,CommonPanel commonPanel);
 }
