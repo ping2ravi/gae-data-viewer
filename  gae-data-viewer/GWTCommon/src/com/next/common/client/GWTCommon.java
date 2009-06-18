@@ -55,7 +55,7 @@ public class GWTCommon implements EntryPoint {
 			}
 			@Override
 			public void onServiceSuccess(EntityDescriptionBean[] result) {
-				ScreenManager.createMainScreen(null);
+				ScreenManager.createMainScreen(result);
 				
 			}
 		};

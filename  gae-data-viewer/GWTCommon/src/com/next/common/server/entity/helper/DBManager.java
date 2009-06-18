@@ -6,7 +6,10 @@ public interface DBManager {
 
 	public Object createObject(Object obj);
 	public Object updateObject(Object obj);
-	public void deleteObjectById(Long id);
-	public Object getObjectById(Long id);
-	public List runQuery(String query);
+	public void deleteObjectById(Class cls,Long id);
+	public void deleteObject(Object obj);
+	public Object getObjectById(Class cls,Long id);
+	public List runQuery(Class cls,Criteria crit);
+	public void commitTransaction();
+	public void rollbackTransaction();
 }

@@ -11,10 +11,13 @@ public interface DBService extends RemoteService {
 	public EntityDescriptionBean[] getAllEntities()  throws ClientException;
 	public EntityDefnitionBean createEntity(EntityDefnitionBean entity);
 	public EntityDefnitionBean updateEntity(EntityDefnitionBean entity);
+	public String[] deleteEntity(String[] entities);
 	public void deleteEntity(Long id);
 	public EntityDescriptionBean getEntityDescription(Long id);
 	public EntityRowBean createEntityData(EntityRowBean entity);
 	public EntityRowBean updateEntityData(EntityRowBean entity);
 	public void deleteEntityData(EntityRowBean entity);
 	public EntityRowBean[] findEntityData();
+	public EntityDefnitionBean[] findAllEntity(String entityName);
+	public EntityDescriptionBean getEntityDescription(String className)  throws ClientException;
 }
