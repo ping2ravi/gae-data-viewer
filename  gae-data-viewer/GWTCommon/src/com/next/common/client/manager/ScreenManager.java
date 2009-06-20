@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.next.common.client.beans.EntityColDefinitionBean;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.listener.MenuClickListener;
@@ -23,6 +24,7 @@ import com.next.common.client.panels.generic.CommonPanel;
 import com.next.common.client.panels.generic.FieldTypes;
 import com.next.common.client.panels.generic.FieldsBean;
 import com.next.common.client.panels.generic.ListBoxPopulator;
+import com.next.common.client.session.ClientCache;
 
 public class ScreenManager {
 
@@ -104,17 +106,29 @@ public class ScreenManager {
 		Panel currentPanel = allPanels.get(text);
 		if(currentPanel  == null)
 		{
-			EntityDescriptionBean bean = entityDefnitionBeanMap.get(text);
+			EntityDescriptionBean bean = ClientCache.getEntityCache(text);
 			if(bean != null)
 			{
 				List<FieldsBean> allFields = new ArrayList<FieldsBean>();
-				String[] fields = bean.getEntityFields();
+				EntityColDefinitionBean[] fields = bean.getEntityFields();
 				if(fields != null)
 				{
 					FieldsBean oneFieldsBean;
-					for(String oneField:fields)
+					boolean enabled;
+					String title;
+					for(EntityColDefinitionBean oneField:fields)
 					{
-						oneFieldsBean = new FieldsBean(FieldTypes.TEXT_BOX,oneField,oneField,true,null);
+						if(oneField.getFieldName().equals(bean.getKeyField()))
+						{
+							enabled = false;
+							title =oneField.getFieldName() +"(PK)"; 
+						}
+						else
+						{
+							enabled = true;
+							title =oneField.getFieldName(); 
+						}
+						oneFieldsBean = new FieldsBean(FieldTypes.TEXT_BOX,title,oneField.getFieldName(),enabled,null);
 						allFields.add(oneFieldsBean);
 					}
 				}
@@ -147,7 +161,13 @@ public class ScreenManager {
 		EntityDescriptionBean entity = entityDefnitionBeanMap.get(entityName);
 		if(entity == null)
 			return null;
-		return entity.getEntityFields();
+		List<String> allFields = new ArrayList<String>();
+		EntityColDefinitionBean[] allFieldBeans = entity.getEntityFields();
+		for(EntityColDefinitionBean oneBean:allFieldBeans)
+		{
+			allFields.add(oneBean.getFieldName());
+		}
+		return (String[])allFields.toArray(new String[0]);
 		
 	}
 }

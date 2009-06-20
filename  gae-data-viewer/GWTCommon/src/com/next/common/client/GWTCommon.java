@@ -23,6 +23,7 @@ import com.next.common.client.factory.ServiceFactory;
 import com.next.common.client.manager.ScreenManager;
 import com.next.common.client.panels.FunctionPanel;
 import com.next.common.client.panels.generic.CommonPanel;
+import com.next.common.client.session.ClientCache;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -55,6 +56,7 @@ public class GWTCommon implements EntryPoint {
 			}
 			@Override
 			public void onServiceSuccess(EntityDescriptionBean[] result) {
+				ClientCache.setEntityCache(result);
 				ScreenManager.createMainScreen(result);
 				
 			}

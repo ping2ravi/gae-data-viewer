@@ -3,27 +3,31 @@ package com.next.common.client.panels.generic;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel{
+public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel,ClickHandler{
 
 	private HTML errorText = new HTML();
 	private FieldsBean[] fields;
 	private Map<String, Widget> elements;
 	private CommonPanel panel;
+	private Button save;
+	private Button cancel;
 	public CommonSavePanel(CommonPanel panel,FieldsBean[] fields)
 	{	
-		super(true);
 		this.panel = panel;
-		super.setWidth("400px");
-		super.setHeight("400px");
+		//super.setWidth("400px");
+		//super.setHeight("400px");
 		this.fields = fields;
 		this.ensureDebugId("cwBasicPopup-simplePopup");
 		elements = new HashMap<String, Widget>();
@@ -57,9 +61,17 @@ public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel
 			col = 0;
 			row++;
 		}
+		HorizontalPanel buttonPanel = new HorizontalPanel();
+		save = new Button("Save");
+		save.addClickHandler(this);
+		cancel = new Button("Cancel");
+		cancel.addClickHandler(this);
+		buttonPanel.add(cancel);
+		buttonPanel.add(save);
 		Grid searchPannel = new Grid(3, 1);
 		searchPannel.setWidget(0,0, errorText);
 		searchPannel.setWidget(1, 0, allControls);
+		searchPannel.setWidget(2, 0, buttonPanel);
 		this.add(searchPannel);
 	}
 	public void populateData(Map<String,String> data)
@@ -96,6 +108,18 @@ public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel
 	public void setErrorMessage(String message) {
 		errorText.setHTML(message);
 		
+	}
+	@Override
+	public void onClick(ClickEvent event) {
+		Object sender = event.getSource();
+		if(sender.equals(this.cancel))
+		{
+			this.hide(true);
+		}
+		if(sender.equals(this.save))
+		{
+			onSave();
+		}
 	}
 
 	

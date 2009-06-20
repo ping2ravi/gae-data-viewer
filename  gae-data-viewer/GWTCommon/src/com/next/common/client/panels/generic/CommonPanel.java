@@ -7,11 +7,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,8 +25,8 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	private Button newButton = new Button("New");
 	private HTML errorText = new HTML();
 	protected Map<String, Widget> searchElements;
-	String objectName;
-	private Grid resultGrid;
+	protected String objectName;
+	private FlexTable resultGrid;
 	private VerticalPanel resultPanel;
 	public CommonPanel(String objectName)
 	{
@@ -92,6 +94,17 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 				else
 					Window.alert("No List box populator is defined");
 			}
+			
+			//Enable all fields for Search
+			if(FieldTypes.LIST_BOX.equals(fields[i].getType()))
+			{
+				((ListBox)widget).setEnabled(true);
+			}
+			if(FieldTypes.TEXT_BOX.equals(fields[i].getType()))
+			{
+				((TextBox)widget).setEnabled(true);
+			}
+			
 			allControls.setWidget(row, col, widget);
 			col++;
 		}
@@ -133,9 +146,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			{*/
 				CommonSavePanel savePanel = new CommonSavePanel(this, fields);
 				savePanel.createSavePanel();
-				savePanel.setModal(false);
-				savePanel.setAutoHideEnabled(true);
-				
+				savePanel.setModal(true);
 				savePanel.center(); //This is a bug, if its uncommented it will not show the panel.
 				savePanel.show();
 				
@@ -178,19 +189,29 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		resultPanel.clear();
 		resultPanel.add(new Label("Error occured at server"));
 	}
-	public void findServiceSuccess(Object object)
+	public void findServiceSuccess(String[][] data,String[] header)
 	{
+		Window.alert("Will display data now");
 		resultPanel.clear();
-		//Object[][] data = this.convertToObjectArray(object);
-		/*
 		if(resultGrid == null)
-			resultGrid = new Grid(data.length,data[0].length);
+			resultGrid = new FlexTable();
 		else
 		{
-			if( resultGrid.getColumnCount() < data[0].length || resultGrid.getRowCount() < data.length)  
-				resultGrid = new Grid(data.length,data[0].length);
+			resultGrid.clear();
 		}
-		*/
+		resultGrid.setBorderWidth(1);
+		for(int i=0;i<header.length;i++)
+		{
+			resultGrid.setWidget(0, i, new HTML("<b>"+header[i]+"</b>"));
+		}
+		for(int i=0;i<data.length;i++)
+		{
+			for(int j=0;j<data[i].length;j++)
+			{
+				resultGrid.setWidget(i+1, j, new HTML(data[i][j]));
+			}
+			
+		}
 		resultPanel.add(resultGrid);
 	}
 

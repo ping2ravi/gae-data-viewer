@@ -9,10 +9,12 @@ import javax.jdo.PersistenceManager;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.next.common.client.DBService;
+import com.next.common.client.beans.EntityDataBean;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.beans.EntityRowBean;
 import com.next.common.client.beans.EntitySearchCriteria;
+import com.next.common.client.beans.EntitySearchResultWrapper;
 import com.next.common.client.exceptions.ClientException;
 import com.next.common.server.entity.Customer;
 import com.next.common.server.entity.EntityDefnition;
@@ -47,9 +49,21 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 	}
 
 	@Override
-	public EntityRowBean createEntityData(EntityRowBean entity) {
-		// TODO Auto-generated method stub
-		return null;
+	public EntityDataBean createEntityData(EntityDataBean entity) throws ClientException {
+		try{
+			GenericEntityHelper geh = GenericEntityHelper.getInstance();
+			DBManager dbManager = getDBManager();
+			System.out.println("DB manger is ready");
+			Map<String, String> searchParams = new HashMap<String, String>();
+			System.out.println("getting data");
+			List data = geh.findGenericEntity(dbManager, entity.getEntityName(), searchParams);
+			System.out.println("converting data");
+			//return ReflectionUtil.getSearchResultData(data, entity.getEntityName());
+			return null;
+			}catch(NoSuchENtity ex)
+			{
+				throw new ClientException(ex);
+			}
 	}
 
 	@Override
@@ -72,12 +86,25 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 	}
 
 	@Override
-	public EntityRowBean[] findEntityData(EntitySearchCriteria searchBean) {
-		GenericEntityHelper geh = GenericEntityHelper.getInstance();
-		DBManager dbManager = getDBManager();
-		Map<String, String> searchParams = new HashMap<String, String>();
-		geh.findGenericEntity(dbManager, searchBean.getEntityName(), searchParams);
-		return null;
+	public EntitySearchResultWrapper findEntityData(EntitySearchCriteria searchBean) throws ClientException {
+		EntitySearchResultWrapper returnEntitySearchResultWrapper;
+		DBManager dbManager = null;
+		try{
+			GenericEntityHelper geh = GenericEntityHelper.getInstance();
+			dbManager = getDBManager();
+			System.out.println("DB manger is ready");
+			Map<String, String> searchParams = new HashMap<String, String>();
+			System.out.println("getting data");
+			List data = geh.findGenericEntity(dbManager, searchBean.getEntityName(), searchParams);
+			System.out.println("converting data");
+			returnEntitySearchResultWrapper = ReflectionUtil.getSearchResultData(data, searchBean.getEntityName());
+			dbManager.commitTransaction();
+		}catch(NoSuchENtity ex)
+		{
+			dbManager.rollbackTransaction();
+			throw new ClientException(ex);
+		}
+		return returnEntitySearchResultWrapper;
 	}
 
 	@Override
@@ -95,6 +122,7 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 				beans.setId(oneBean.getId());
 				beans.setEntityName(oneBean.getName());
 				beans.setEntityFields(ReflectionUtil.getClassFields(oneBean.getName()));
+				beans.setKeyField(oneBean.getKeyField());
 				allReturnedEntityBeans.add(beans);
 			}
 			dbManager.commitTransaction();
@@ -132,7 +160,7 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 	}
 
 	@Override
-	public EntityRowBean updateEntityData(EntityRowBean entity) {
+	public EntityDataBean updateEntityData(EntityDataBean entity) throws ClientException{
 		// TODO Auto-generated method stub
 		return null;
 	}
