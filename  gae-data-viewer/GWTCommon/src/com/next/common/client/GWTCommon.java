@@ -21,7 +21,6 @@ import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.callback.DefaultAsyncCallback;
 import com.next.common.client.factory.ServiceFactory;
 import com.next.common.client.manager.ScreenManager;
-import com.next.common.client.panels.FunctionPanel;
 import com.next.common.client.panels.generic.CommonPanel;
 import com.next.common.client.session.ClientCache;
 
