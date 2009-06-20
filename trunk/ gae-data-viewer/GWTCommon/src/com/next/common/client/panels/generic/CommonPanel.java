@@ -9,7 +9,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -20,7 +22,12 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.next.common.client.beans.EntityColBean;
+import com.next.common.client.beans.EntityColDefinitionBean;
+import com.next.common.client.beans.EntityDescriptionBean;
+import com.next.common.client.factory.ServiceFactory;
 import com.next.common.client.panels.EntityPanel;
+import com.next.common.client.session.ClientCache;
 
 public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 
@@ -29,6 +36,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	private Button search = new Button("Search");
 	private Button clear = new Button("Clear");
 	private Button newButton = new Button("New");
+	private Button deleteButton = new Button("Delete");
 	private HTML errorText = new HTML();
 	protected Map<String, Widget> searchElements;
 	protected String objectName;
@@ -64,7 +72,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		int rowCount = fields.length/2 + 1;
 
 		HorizontalPanel allButtonPanel = new HorizontalPanel();
-		Grid buttonPanel = new Grid(1,5);
+		Grid buttonPanel = new Grid(1,6);
 		search.addClickHandler(this);
 		buttonPanel.setWidget(0, 0, search);
 		
@@ -75,6 +83,10 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		newButton.addClickHandler(this);
 		buttonPanel.setWidget(0, 4, newButton);
 		
+		deleteButton.setEnabled(false);
+		deleteButton.addClickHandler(this);
+		buttonPanel.setWidget(0, 5, deleteButton);
+
 		allButtonPanel.add(buttonPanel);
 		Grid allControls = new Grid(rowCount,4);
 		int row = -1;
@@ -146,22 +158,67 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			}
              */
 		}
+		if(event.getSource().equals(deleteButton))
+		{
+			if(resultGrid != null)
+			{
+				int totalRows = resultGrid.getRowCount()-1;
+				CheckBox checkBox;
+				List<EntityColBean> allDeletedData = new ArrayList<EntityColBean>();
+				for(int i=totalRows;i>=1;i--)
+				{
+					checkBox = (CheckBox)resultGrid.getWidget(i, 0);
+					EntityColBean oneEntityKey;
+					String key;
+					if(checkBox.getValue())
+					{
+						oneEntityKey = getKeyValuefromRow(i);
+						allDeletedData.add(oneEntityKey);
+						Window.alert("You want to delte" + oneEntityKey.getFieldName()+" with value " + oneEntityKey.getFieldValue());
+					}
+				}
+				if(allDeletedData.size() <= 0)
+					Window.alert("No Records Selected");
+				else
+				{
+					
+					ServiceFactory.getDBService().deleteEntityData(this.objectName,(EntityColBean[])allDeletedData.toArray(new EntityColBean[0]), new AsyncCallback<EntityColBean[]>(){
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Error "+ caught);
+						}
+	
+						@Override
+						public void onSuccess(EntityColBean[] result) {
+							int totalRows = resultGrid.getRowCount()-1;
+							Window.alert("Rows delted succesfully " + result.length);
+							for(int i=totalRows;i>=1;i--)
+							{
+								for(int j=0;j<result.length;j++)
+								{
+									GWT.log(result[j].getFieldValue()+":" + getKeyValuefromRow(i).getFieldValue(), null);
+									if(result[j].getFieldValue().equals(getKeyValuefromRow(i).getFieldValue()))
+									{
+										resultGrid.removeRow(i);
+										break;
+									}
+								}
+									
+							}
+						}
+						
+					});
+					
+				}
+			}
+		}
 		if(sender.equals(newButton))
 		{
-			/*if(UserInfo.getInstance().isUserAllowedForOperation("create" + objectName))
-			{*/
 				savePanel = new CommonSavePanel(this, fields);
 				savePanel.createSavePanel();
 				savePanel.setModal(true);
 				savePanel.center(); //This is a bug, if its uncommented it will not show the panel.
 				savePanel.show();
-				
-			/*}
-			else
-			{
-				Window.alert("You are not authorized to do create new entries");
-			}
-            */
 		}
 		if(event.getSource().equals(resultGrid))
 		{
@@ -184,6 +241,32 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			
 		}
 		
+	}
+	private EntityColBean getKeyValuefromRow(int row)
+	{
+		EntityDescriptionBean bean = ClientCache.getEntityCache(this.objectName);
+		String keyField = bean.getKeyField();
+		//get keyFieldType
+		String keyFieldType = null;
+		for(EntityColDefinitionBean oneBean:bean.getEntityFields())
+		{
+			if(oneBean.getFieldName().equals(keyField))
+				keyFieldType =oneBean.getFieldType();
+		}
+		int totalColCount = resultGrid.getCellCount(0);
+		EntityColBean returnValue = null;
+		for(int i=1;i<totalColCount;i++)
+		{
+			if(keyField.equals(resultGrid.getText(0, i)))
+			{
+				returnValue = new EntityColBean();
+				returnValue.setFieldName(keyField);
+				returnValue.setFieldType(keyFieldType);
+				returnValue.setFieldValue(resultGrid.getText(row, i));
+				break;
+			}
+		}
+		return returnValue;
 	}
 	public Map<String, String> getSearchParams() {
 		Map<String, String> allParamList = new HashMap<String, String>();
@@ -214,10 +297,12 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	{
 		resultPanel.clear();
 		resultPanel.add(new Label("Error occured at server"));
+		deleteButton.setEnabled(false);
 	}
 	public void findServiceSuccess(String[][] data,String[] header)
 	{
 		resultPanel.clear();
+		deleteButton.setEnabled(true);
 		if(resultGrid == null)
 		{
 			resultGrid = new FlexTable();
@@ -228,15 +313,17 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			resultGrid.clear();
 		}
 		resultGrid.setBorderWidth(1);
+		resultGrid.setWidget(0, 0, new HTML("<b>Select</b>"));
 		for(int i=0;i<header.length;i++)
 		{
-			resultGrid.setWidget(0, i, new HTML("<b>"+header[i]+"</b>"));
+			resultGrid.setWidget(0, i+1, new HTML("<b>"+header[i]+"</b>"));
 		}
 		for(int i=0;i<data.length;i++)
 		{
+			resultGrid.setWidget(i+1, 0,new CheckBox());
 			for(int j=0;j<data[i].length;j++)
 			{
-				resultGrid.setWidget(i+1, j, new HTML(data[i][j]));
+				resultGrid.setWidget(i+1, j+1, new HTML(data[i][j]));
 			}
 			
 		}

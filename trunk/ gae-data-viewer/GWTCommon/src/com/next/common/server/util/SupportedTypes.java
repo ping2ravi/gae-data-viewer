@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.appengine.api.datastore.KeyFactory;
+
 public class SupportedTypes {
 
 	private static Map<String, String> types = new HashMap<String, String>();
@@ -42,7 +44,7 @@ public class SupportedTypes {
 			returnValue = true;
 		return returnValue;
 	}
-	public static Object getValue(String data,String type) throws ParseException
+	public static Object getValue(String objectCLass,String data,String type) throws ParseException
 	{
 		if(data == null || "".equals(data.trim()))
 			return null;
@@ -69,12 +71,9 @@ public class SupportedTypes {
 		}
 		if(java.lang.String.class.getName().equals(type))
 			return data;
+		if(com.google.appengine.api.datastore.Key.class.getName().equals(type))
+			return KeyFactory.createKey(objectCLass, data);
 		return null;
-	}
-	private static Date getDate(String dt)
-	{
-		Date date = new Date(dt);
-		return date;
 	}
 	public static void main(String[] args)
 	{

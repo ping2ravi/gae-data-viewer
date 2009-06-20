@@ -20,7 +20,7 @@ public class JDOManager implements DBManager{
 	}
 
 	@Override
-	public void deleteObjectById(Class cls,Long id) {
+	public void deleteObjectById(Class cls,Object id) {
 		Object obj = getObjectById(cls,id);
 		pm.deletePersistent(obj);
 	}
@@ -29,7 +29,7 @@ public class JDOManager implements DBManager{
 	}
 
 	@Override
-	public Object getObjectById(Class cls,Long id) {
+	public Object getObjectById(Class cls,Object id) {
 		// TODO Auto-generated method stub
 		return pm.getObjectById(cls, id);
 	}
