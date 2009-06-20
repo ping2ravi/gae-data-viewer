@@ -52,7 +52,7 @@ public class FunctionPanel extends CommonPanel{
 	}
 
 	@Override
-	public void findData(Object object) {
+	public void findData(Map object) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -12,7 +12,7 @@ public class SearchResultWrapperW  implements Serializable,IsSerializable {
 	 */
 	private static final long serialVersionUID = -5006441180327308668L;
 	private Long totalSize;
-	//private SearchResultInt[] data;
+	private SearchResultInt[] data;
 	/**
 	 * @param totalSize the totalSize to set
 	 */
@@ -28,13 +28,13 @@ public class SearchResultWrapperW  implements Serializable,IsSerializable {
 	/**
 	 * @param data the data to set
 	 */
-	//public void setData(SearchResultInt[] data) {
-		//this.data = data;
-	//}
+	public void setData(SearchResultInt[] data) {
+		this.data = data;
+	}
 	/**
 	 * @return the data
 	 */
-	//public SearchResultInt[] getData() {
-		//return data;
-	//}	
+	public SearchResultInt[] getData() {
+		return data;
+	}	
 }

@@ -1,5 +1,7 @@
 package com.next.common.client.panels;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -11,10 +13,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.next.common.client.beans.EntityColDefinitionBean;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.factory.ServiceFactory;
@@ -23,6 +27,7 @@ import com.next.common.client.panels.generic.CommonPanel;
 import com.next.common.client.panels.generic.FieldTypes;
 import com.next.common.client.panels.generic.FieldsBean;
 import com.next.common.client.panels.generic.UiErrorPanel;
+import com.next.common.client.session.ClientCache;
 
 public class EntityPanel extends DecoratedPopupPanel implements ChangeHandler,ClickHandler{
 
@@ -128,7 +133,21 @@ public class EntityPanel extends DecoratedPopupPanel implements ChangeHandler,Cl
 		fieldNames.clear();
 		if(entityName.getText() != null && !entityName.getText().trim().equals(""))
 		{
-			String[] allFields = ScreenManager.getEntityFields(entityName.getText());
+			EntityDescriptionBean entity = ClientCache.getEntityCache(entityName.getText());
+			List<String> allFieldsDef = new ArrayList<String>();
+			String[] allFields = null;
+			EntityColDefinitionBean[] allFieldBeans = null;
+			if(entity != null)
+			{
+				allFieldBeans = entity.getEntityFields();
+				keyField = entity.getKeyField();
+				for(EntityColDefinitionBean oneBean:allFieldBeans)
+				{
+					allFieldsDef.add(oneBean.getFieldName());
+				}
+				allFields = (String[])allFieldsDef.toArray(new String[0]);
+			}
+			
 			if(allFields == null || allFields.length <= 0)
 			{
 				ServiceFactory.getDBService().getEntityDescription(entityName.getText(), new AsyncCallback<EntityDescriptionBean>(){
@@ -141,10 +160,12 @@ public class EntityPanel extends DecoratedPopupPanel implements ChangeHandler,Cl
 
 					@Override
 					public void onSuccess(EntityDescriptionBean result) {
-						String[] allFields = result.getEntityFields();
-						for(String oneField:allFields)
+						ClientCache.setEntityCache(result);
+						EntityColDefinitionBean[] allFields = result.getEntityFields();
+						fieldNames.clear();
+						for(EntityColDefinitionBean oneField:allFields)
 						{
-							fieldNames.addItem(oneField,oneField);
+							fieldNames.addItem(oneField.getFieldName()+" - "+oneField.getFieldType(),oneField.getFieldName());
 						}
 					}
 					
@@ -153,9 +174,13 @@ public class EntityPanel extends DecoratedPopupPanel implements ChangeHandler,Cl
 			else
 			{
 				int i = 0;
+				fieldNames.clear();
+				for(EntityColDefinitionBean oneField:allFieldBeans)
+				{
+					fieldNames.addItem(oneField.getFieldName()+" - "+oneField.getFieldType(),oneField.getFieldName());
+				}
 				for(String oneField:allFields)
 				{
-					fieldNames.addItem(oneField,oneField);
 					if(oneField.equals(keyField))
 					{
 						fieldNames.setSelectedIndex(i);

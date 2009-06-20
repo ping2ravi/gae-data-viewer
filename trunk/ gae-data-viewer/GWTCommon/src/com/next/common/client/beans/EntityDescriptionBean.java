@@ -7,7 +7,13 @@ public class EntityDescriptionBean implements Serializable {
 	private Long id;
 	private String entityName;
 	private String keyField;
-	private String[] entityFields;
+	public String getKeyField() {
+		return keyField;
+	}
+	public void setKeyField(String keyField) {
+		this.keyField = keyField;
+	}
+	private EntityColDefinitionBean[] entityFields;
 	public Long getId() {
 		return id;
 	}
@@ -20,10 +26,10 @@ public class EntityDescriptionBean implements Serializable {
 	public void setEntityName(String entityName) {
 		this.entityName = entityName;
 	}
-	public String[] getEntityFields() {
+	public EntityColDefinitionBean[] getEntityFields() {
 		return entityFields;
 	}
-	public void setEntityFields(String[] entityFields) {
+	public void setEntityFields(EntityColDefinitionBean[] entityFields) {
 		this.entityFields = entityFields;
 	}
 }
