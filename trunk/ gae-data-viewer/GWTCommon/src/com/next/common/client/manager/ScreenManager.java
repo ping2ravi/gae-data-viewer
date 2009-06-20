@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.next.common.client.beans.EntityColDefinitionBean;
-import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
 import com.next.common.client.listener.MenuClickListener;
 import com.next.common.client.panels.EntityPanel;
@@ -116,8 +115,10 @@ public class ScreenManager {
 					FieldsBean oneFieldsBean;
 					boolean enabled;
 					String title;
+					String fieldType;
 					for(EntityColDefinitionBean oneField:fields)
 					{
+						fieldType = getFieldType(oneField.getFieldType());
 						if(oneField.getFieldName().equals(bean.getKeyField()))
 						{
 							enabled = false;
@@ -125,10 +126,10 @@ public class ScreenManager {
 						}
 						else
 						{
-							enabled = true;
+							enabled = oneField.isUpdateAllow();
 							title =oneField.getFieldName(); 
 						}
-						oneFieldsBean = new FieldsBean(FieldTypes.TEXT_BOX,title,oneField.getFieldName(),enabled,null);
+						oneFieldsBean = new FieldsBean(fieldType,title,oneField.getFieldName(),enabled,null);
 						allFields.add(oneFieldsBean);
 					}
 				}
@@ -155,6 +156,28 @@ public class ScreenManager {
 			Window.alert("Clicked on " + text +", which is not implemented yet");
 		}
 		
+	}
+	public static String getFieldType(String type)
+	{
+		if(byte.class.getName().equals(type) || Byte.class.getName().equals(type))
+			return FieldTypes.TEXT_BOX;
+		if(short.class.getName().equals(type) || Short.class.getName().equals(type))
+			return FieldTypes.TEXT_BOX;
+		if(int.class.getName().equals(type) || Integer.class.getName().equals(type))
+			return FieldTypes.TEXT_BOX;
+		if(long.class.getName().equals(type) || Long.class.getName().equals(type))
+			return FieldTypes.TEXT_BOX;
+		if(float.class.getName().equals(type) || Float.class.getName().equals(type))
+			return FieldTypes.TEXT_BOX;
+		if(double.class.getName().equals(type) || Double.class.getName().equals(type))
+			return FieldTypes.TEXT_BOX;
+		if(boolean.class.getName().equals(type) || Boolean.class.getName().equals(type))
+			return FieldTypes.BOOLEAN_LIST_BOX;
+		if(char.class.getName().equals(type) || Character.class.getName().equals(type))
+			return FieldTypes.TEXT_BOX;
+		if(java.util.Date.class.getName().equals(type))
+			return FieldTypes.DATE_PICKER_BOX;
+		return FieldTypes.TEXT_BOX;
 	}
 	public static String[] getEntityFields(String entityName)
 	{

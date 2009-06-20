@@ -6,6 +6,7 @@
 package com.next.common.client.panels;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,12 +44,14 @@ public class GenericPanel extends CommonPanel{
 
     @Override
     public Object getObjectFromParams(Map<String, String> params) {
+    	EntityDescriptionBean entityDescription = ClientCache.getEntityCache(super.objectName);
     	EntityDataBean edb = new EntityDataBean();
     	edb.setEntityName(super.objectName);
+    	edb.setPkField(entityDescription.getKeyField());
+    	
     	List<EntityColBean> allColumnData = new ArrayList<EntityColBean>();
-    	EntityColBean oneCol;
-    	EntityDescriptionBean entityDescription = ClientCache.getEntityCache(super.objectName);
     	EntityColDefinitionBean[] colDefinitons = entityDescription.getEntityFields();
+    	EntityColBean oneCol;
     	for(String key:params.keySet())
     	{
     		oneCol = new EntityColBean();
@@ -92,18 +95,64 @@ public class GenericPanel extends CommonPanel{
     		}
     	}
     	if(isCreate)
-    		Window.alert("I sholuld create now");
+    	{
+    		Window.alert("I sholuld Crete now");
+    		ServiceFactory.getDBService().createEntityData(data, new AsyncCallback<EntityDataBean>(){
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error " + caught);
+				}
+
+				@Override
+				public void onSuccess(EntityDataBean result) {
+					Window.alert("created succesfully ");
+					EntityColBean[] colBeans = result.getColumns();
+					Map<String,String> data = new HashMap<String, String>();
+					for(int i=0;i<colBeans.length;i++)
+					{
+						data.put(colBeans[i].getFieldName(), colBeans[i].getFieldValue());
+					}
+					savePanel.populateData(data);
+				}
+    			
+    		});
+    	}
     	else
+    	{
     		Window.alert("I sholuld update now");
+    		ServiceFactory.getDBService().updateEntityData(data, new AsyncCallback<EntityDataBean>(){
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error " + caught);
+				}
+
+				@Override
+				public void onSuccess(EntityDataBean result) {
+					Window.alert("created succesfully ");
+					EntityColBean[] colBeans = result.getColumns();
+					Map<String,String> data = new HashMap<String, String>();
+					for(int i=0;i<colBeans.length;i++)
+					{
+						data.put(colBeans[i].getFieldName(), colBeans[i].getFieldValue());
+					}
+					savePanel.populateData(data);
+				}
+    			
+    		});
+    		
+    	}
     }
 
     @Override
     public void findData(Map searchData) {
         //get the search criteria
     	EntitySearchCriteria searchBean = new EntitySearchCriteria();
-    	searchBean.setEntityName("com.next.common.server.entity.Greeting");
+    	searchBean.setEntityName(super.objectName);
     	FindEntityDataCallback callback = new FindEntityDataCallback(this,"key");
     	ServiceFactory.getDBService().findEntityData(searchBean,callback);
+    	
     	
     }
 

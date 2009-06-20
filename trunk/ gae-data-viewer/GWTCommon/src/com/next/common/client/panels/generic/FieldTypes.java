@@ -9,6 +9,7 @@ public class FieldTypes {
 
 	public static final String TEXT_BOX = "TEXT_BOX";
 	public static final String LIST_BOX = "LIST_BOX";
+	public static final String DATE_PICKER_BOX = "DATE_PICKER_BOX";
 	public static final String BOOLEAN_LIST_BOX = "BOOLEAN_LIST_BOX";
 	
 	
@@ -37,6 +38,12 @@ public class FieldTypes {
             returnWidget.addItem("false", "false");
 			return returnWidget;
 		}
+		if(DATE_PICKER_BOX.equals(type))
+		{
+			MyDatePicker returnWidget = new MyDatePicker();
+			returnWidget.setEnabled(enabled);
+			return returnWidget;
+		}
 		Window.alert("Error : Type " + type+" is not supported");
 		return null;
 		
@@ -59,6 +66,11 @@ public class FieldTypes {
 		{
 			ListBox listBox = (ListBox)widget;
 			return listBox.getValue(listBox.getSelectedIndex());
+		}
+		if(DATE_PICKER_BOX.equals(type))
+		{
+			MyDatePicker returnWidget = (MyDatePicker)widget;
+			return returnWidget.getDate();
 		}
 		Window.alert("Error : Type " + type+" is not supported");
 		return null;
@@ -85,6 +97,12 @@ public class FieldTypes {
 			ListBox listBox = (ListBox)widget;
 			listBox.setSelectedIndex(0);
 			return;
+		}
+		if(DATE_PICKER_BOX.equals(type))
+		{
+			MyDatePicker returnWidget = (MyDatePicker)widget;
+			returnWidget.clear();
+			return ;
 		}
 		Window.alert("Error : Type " + type+" is not supported");
 		
@@ -128,6 +146,12 @@ public class FieldTypes {
 			}
 			listBox.setSelectedIndex(selected);
 			return;
+		}
+		if(DATE_PICKER_BOX.equals(type))
+		{
+			MyDatePicker returnWidget = (MyDatePicker)widget;
+			returnWidget.setDate(value);
+			return ;
 		}
 		Window.alert("Error : Type " + type+" is not supported");
 		

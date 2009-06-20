@@ -1,8 +1,11 @@
 package com.next.common.client.panels.generic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -16,9 +19,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.next.common.client.panels.EntityPanel;
 
 public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 
+	protected CommonSavePanel savePanel;	
 	private FieldsBean[] fields;
 	private Button search = new Button("Search");
 	private Button clear = new Button("Clear");
@@ -68,7 +74,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		
 		newButton.addClickHandler(this);
 		buttonPanel.setWidget(0, 4, newButton);
-
+		
 		allButtonPanel.add(buttonPanel);
 		Grid allControls = new Grid(rowCount,4);
 		int row = -1;
@@ -144,7 +150,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		{
 			/*if(UserInfo.getInstance().isUserAllowedForOperation("create" + objectName))
 			{*/
-				CommonSavePanel savePanel = new CommonSavePanel(this, fields);
+				savePanel = new CommonSavePanel(this, fields);
 				savePanel.createSavePanel();
 				savePanel.setModal(true);
 				savePanel.center(); //This is a bug, if its uncommented it will not show the panel.
@@ -156,6 +162,26 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 				Window.alert("You are not authorized to do create new entries");
 			}
             */
+		}
+		if(event.getSource().equals(resultGrid))
+		{
+			savePanel = new CommonSavePanel(this, fields);
+			savePanel.createSavePanel();
+			Cell cell = resultGrid.getCellForEvent(event);
+			Map<String,String> data = new HashMap<String,String>();
+			int totalColumn = resultGrid.getCellCount(0);
+			for(int i=0;i<totalColumn;i++)
+			{
+				data.put(resultGrid.getText(0, i).toString(),resultGrid.getText(cell.getRowIndex(), i));
+			}
+			if(cell.getCellIndex() != 0 && cell.getRowIndex()!= 0)
+			{
+				savePanel.setModal(true);
+				savePanel.center();
+				savePanel.show();
+				savePanel.populateData(data);
+			}
+			
 		}
 		
 	}
@@ -191,10 +217,12 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	}
 	public void findServiceSuccess(String[][] data,String[] header)
 	{
-		Window.alert("Will display data now");
 		resultPanel.clear();
 		if(resultGrid == null)
+		{
 			resultGrid = new FlexTable();
+			resultGrid.addClickHandler(this);
+		}
 		else
 		{
 			resultGrid.clear();

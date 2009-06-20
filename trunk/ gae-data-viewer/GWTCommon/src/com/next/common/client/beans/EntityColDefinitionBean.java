@@ -5,6 +5,13 @@ import java.io.Serializable;
 public class EntityColDefinitionBean implements Serializable {
 	private String fieldName;
 	private String fieldType;
+	private boolean updateAllow;
+	public boolean isUpdateAllow() {
+		return updateAllow;
+	}
+	public void setUpdateAllow(boolean updateAllow) {
+		this.updateAllow = updateAllow;
+	}
 	public String getFieldType() {
 		return fieldType;
 	}
