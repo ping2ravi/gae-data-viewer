@@ -9,6 +9,7 @@ import javax.jdo.PersistenceManager;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.next.common.client.DBService;
+import com.next.common.client.beans.EntityColBean;
 import com.next.common.client.beans.EntityDataBean;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
@@ -94,9 +95,28 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 	}
 
 	@Override
-	public void deleteEntityData(EntityRowBean entity) {
-		// TODO Auto-generated method stub
-		
+	public EntityColBean[] deleteEntityData(String entityName,EntityColBean[] entities) throws ClientException {
+		DBManager dbManager = getDBManager();
+		System.out.println("Start");
+		try{
+			GenericEntityHelper geh = GenericEntityHelper.getInstance();
+			for(EntityColBean oneEntityKey:entities)
+			{
+				Object dbEntityKey = ReflectionUtil.getEntityKey(entityName,oneEntityKey);
+				if(dbEntityKey == null)
+					throw new ClientException("Data type not supported for PK field");
+				System.out.println("deleting Object " + dbEntityKey);
+				geh.deleteGenericEntity(dbManager, entityName, dbEntityKey);
+			}
+			System.out.println("Finished Deleting ");
+			dbManager.commitTransaction();
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			dbManager.rollbackTransaction();
+			throw new ClientException(ex);
+		}
+		return entities;
 	}
 
 	@Override
@@ -175,8 +195,36 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 
 	@Override
 	public EntityDataBean updateEntityData(EntityDataBean entity) throws ClientException{
-		// TODO Auto-generated method stub
-		return null;
+		DBManager dbManager = null;
+		try{
+			GenericEntityHelper geh = GenericEntityHelper.getInstance();
+			dbManager = getDBManager();
+			Object dbEntityKey = ReflectionUtil.getEntityKey(entity);
+			if(dbEntityKey == null)
+				throw new ClientException("Data type not supported for PK field");
+			System.out.println("Get Object from DB");
+			Object dbEntity = geh.getGenericEntityById(dbManager, entity.getEntityName(), dbEntityKey);
+			if(dbEntity == null)
+				throw new ClientException("Cannot update data, PK value ["+dbEntityKey+"] do not exists in Database");
+			ReflectionUtil.updateEntityDataObject(entity.getColumns(), dbEntity);
+			geh.updateGenericEntity(dbManager, dbEntity);
+
+			for(int i=0;i<entity.getColumns().length;i++)
+			{
+				if(entity.getPkField().equals(entity.getColumns()[i].getFieldName()))
+					entity.getColumns()[i].setFieldValue(ReflectionUtil.getPropertyValue(dbEntity,entity.getPkField() ,entity.getColumns()[i].getFieldType(), false));
+			}
+			dbManager.commitTransaction();
+			}catch(NoSuchENtity ex)
+			{
+				dbManager.rollbackTransaction();
+				throw new ClientException(ex);
+			}catch(Exception ex){
+				dbManager.rollbackTransaction();
+				ex.printStackTrace();
+				throw new ClientException("Internal Server error ");
+			}
+			return entity;
 	}
 
 	@Override

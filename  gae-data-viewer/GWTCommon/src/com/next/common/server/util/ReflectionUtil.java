@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.next.common.client.beans.EntityColBean;
 import com.next.common.client.beans.EntityColDefinitionBean;
+import com.next.common.client.beans.EntityDataBean;
 import com.next.common.client.beans.EntitySearchResultWrapper;
 import com.next.common.server.entity.Customer;
 import com.next.common.server.exceptions.NoSuchENtity;
@@ -46,6 +47,24 @@ public class ReflectionUtil {
 			allFields.add(oneBean);
 		}
 		return (EntityColDefinitionBean[])allFields.toArray(new EntityColDefinitionBean[0]);
+	}
+	public static Object getEntityKey(EntityDataBean entity) throws ParseException
+	{
+		String pkField = entity.getPkField();
+		EntityColBean[] colBeans = entity.getColumns();
+		for(EntityColBean oneColBean:colBeans)
+		{
+			if(oneColBean.getFieldName().equals(pkField))
+			{
+				return SupportedTypes.getValue(entity.getEntityName(), oneColBean.getFieldValue(), oneColBean.getFieldType());
+			}
+		}
+		return null;
+	}
+	public static Object getEntityKey(String entityName,EntityColBean entity) throws ParseException
+	{
+		String pkField = entity.getFieldName();
+		return SupportedTypes.getValue(entityName, entity.getFieldValue(), entity.getFieldType());
 	}
 	public static EntitySearchResultWrapper getSearchResultData(List<Object> data,String entityName) throws NoSuchENtity
 	{
@@ -124,6 +143,11 @@ public class ReflectionUtil {
 			e.printStackTrace();
 			throw new NoSuchENtity("No Such Entity Exists " + entityName);
 		}
+		returnObject = updateEntityDataObject(data, returnObject);
+		return returnObject;
+	}
+	public static Object updateEntityDataObject(EntityColBean[] data,Object returnObject) throws Exception
+	{
 		Class typeClass;
 		for(EntityColBean oneCol:data)
 		{
@@ -160,7 +184,8 @@ public class ReflectionUtil {
         Class[] cArr = null;
         Object[] objs = null;
         /*Get External ID */
-
+        if(!SupportedTypes.isSupported(type))
+        	return;
         propertyName = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
         System.out.println("propertyName is " + propertyName +", value is" + value);
 
@@ -170,7 +195,7 @@ public class ReflectionUtil {
 
         Method mSetExID = object.getClass().getMethod("set" + propertyName, cArr);
         objs = new Object[1];
-        objs[0] = SupportedTypes.getValue(String.valueOf(value), type);
+        objs[0] = SupportedTypes.getValue(object.getClass().getSimpleName(),String.valueOf(value), type);
         System.out.println("propertyType is " + type +", value is = " + objs[0]);
 
         mSetExID.invoke(object,objs);

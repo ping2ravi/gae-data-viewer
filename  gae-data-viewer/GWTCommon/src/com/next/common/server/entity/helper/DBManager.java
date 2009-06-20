@@ -7,9 +7,9 @@ public interface DBManager {
 
 	public Object createObject(Object obj);
 	public Object updateObject(Object obj);
-	public void deleteObjectById(Class cls,Long id);
+	public void deleteObjectById(Class cls,Object id);
 	public void deleteObject(Object obj);
-	public Object getObjectById(Class cls,Long id);
+	public Object getObjectById(Class cls,Object id);
 	public List runQuery(Class cls,Criteria crit);
 	public List runQuery(Class cls,Map<String, String> crit);
 	public void commitTransaction();

@@ -1,6 +1,7 @@
 package com.next.common.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.next.common.client.beans.EntityColBean;
 import com.next.common.client.beans.EntityDataBean;
 import com.next.common.client.beans.EntityDefnitionBean;
 import com.next.common.client.beans.EntityDescriptionBean;
@@ -16,7 +17,7 @@ public interface DBServiceAsync {
 	public void getEntityDescription(Long id,AsyncCallback<EntityDescriptionBean> callback);
 	public void createEntityData(EntityDataBean entity,AsyncCallback<EntityDataBean> callback);
 	public void updateEntityData(EntityDataBean entity,AsyncCallback<EntityDataBean> callback);
-	public void deleteEntityData(EntityRowBean entity,AsyncCallback callback);
+	public void deleteEntityData(String entityName,EntityColBean[] entities,AsyncCallback<EntityColBean[]> callback);
 	public void findEntityData(EntitySearchCriteria searchBean,AsyncCallback<EntitySearchResultWrapper> callback);
 	public void findAllEntity(String entityName,AsyncCallback<EntityDefnitionBean[]> callback);
 	public void getEntityDescription(String className,AsyncCallback<EntityDescriptionBean> callback);
