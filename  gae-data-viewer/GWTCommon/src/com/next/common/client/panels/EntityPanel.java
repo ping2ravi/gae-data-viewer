@@ -83,7 +83,7 @@ public class EntityPanel extends DecoratedPopupPanel implements ChangeHandler,Cl
 			if(idTextBox.getText().trim().equals(""))
 			{
 				EntityDefnitionBean entity = new EntityDefnitionBean();
-				entity.setKeyField(fieldNames.getItemText(fieldNames.getSelectedIndex()));
+				entity.setKeyField(fieldNames.getValue(fieldNames.getSelectedIndex()));
 				entity.setName(entityName.getText());
 				ServiceFactory.getDBService().createEntity(entity, new AsyncCallback<EntityDefnitionBean>(){
 
@@ -103,7 +103,7 @@ public class EntityPanel extends DecoratedPopupPanel implements ChangeHandler,Cl
 			else
 			{
 				EntityDefnitionBean entity = new EntityDefnitionBean();
-				entity.setKeyField(fieldNames.getItemText(fieldNames.getSelectedIndex()));
+				entity.setKeyField(fieldNames.getValue(fieldNames.getSelectedIndex()));
 				entity.setName(entityName.getText());
 				entity.setId(Long.parseLong(idTextBox.getText()));
 				ServiceFactory.getDBService().updateEntity(entity, new AsyncCallback<EntityDefnitionBean>(){

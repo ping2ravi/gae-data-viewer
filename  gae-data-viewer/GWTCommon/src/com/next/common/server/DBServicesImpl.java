@@ -50,19 +50,33 @@ public class DBServicesImpl extends RemoteServiceServlet implements DBService{
 
 	@Override
 	public EntityDataBean createEntityData(EntityDataBean entity) throws ClientException {
+		DBManager dbManager = null;
 		try{
 			GenericEntityHelper geh = GenericEntityHelper.getInstance();
-			DBManager dbManager = getDBManager();
-			System.out.println("DB manger is ready");
-			Map<String, String> searchParams = new HashMap<String, String>();
-			System.out.println("getting data");
-			List data = geh.findGenericEntity(dbManager, entity.getEntityName(), searchParams);
+			dbManager = getDBManager();
+			Object dbEntity = ReflectionUtil.getEntityDataObject(entity.getColumns(), entity.getEntityName());
+			
+			/*System.out.println("Author : " + greet.getAuthor());
+			System.out.println("Content : " + greet.getContent());
+			System.out.println("Date : " + greet.getDate());*/
 			System.out.println("converting data");
-			//return ReflectionUtil.getSearchResultData(data, entity.getEntityName());
-			return null;
+			geh.createGenericEntity(dbManager, dbEntity);
+
+			for(int i=0;i<entity.getColumns().length;i++)
+			{
+				if(entity.getPkField().equals(entity.getColumns()[i].getFieldName()))
+					entity.getColumns()[i].setFieldValue(ReflectionUtil.getPropertyValue(dbEntity,entity.getPkField() ,entity.getColumns()[i].getFieldType(), false));
+			}
+			dbManager.commitTransaction();
+			return entity;
 			}catch(NoSuchENtity ex)
 			{
+				dbManager.rollbackTransaction();
 				throw new ClientException(ex);
+			}catch(Exception ex){
+				dbManager.rollbackTransaction();
+				ex.printStackTrace();
+				throw new ClientException("Internal Server error ");
 			}
 	}
 

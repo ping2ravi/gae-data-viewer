@@ -4,9 +4,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.TypeVariable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.next.common.client.beans.EntityColBean;
 import com.next.common.client.beans.EntityColDefinitionBean;
 import com.next.common.client.beans.EntitySearchResultWrapper;
 import com.next.common.server.entity.Customer;
@@ -39,6 +42,7 @@ public class ReflectionUtil {
 			if(returnType.startsWith("class "))
 				returnType = returnType.substring(6);
 			oneBean.setFieldType(returnType);
+			oneBean.setUpdateAllow(SupportedTypes.isSupported(returnType));
 			allFields.add(oneBean);
 		}
 		return (EntityColDefinitionBean[])allFields.toArray(new EntityColDefinitionBean[0]);
@@ -86,13 +90,15 @@ public class ReflectionUtil {
 				System.out.println("Method " + allMethods[i].getName() + " returns "+ returnType);
 				if(SupportedTypes.isSupported(returnType))
 					try{
-					oneRow.add(getPropertyValue(oneObj, allMethods[i].getName(), true));
+					oneRow.add(getPropertyValue(oneObj, allMethods[i].getName(),returnType, true));
 					}catch(Exception ex)
 					{
+						ex.printStackTrace();
 						oneRow.add("Could not read value of this column");
 					}
-				else
+				else{
 					oneRow.add("");
+				}
 					
 			}
 			allData.add((String[])oneRow.toArray(new String[0]));
@@ -107,7 +113,25 @@ public class ReflectionUtil {
 		returnData.setData((String[][])allData.toArray(new String[0][0]));
 		return returnData;
 	}
-	public static String getPropertyValue(Object obj,String methodName,boolean method) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException 
+	public static Object getEntityDataObject(EntityColBean[] data,String entityName) throws Exception
+	{
+		Class cl = null;
+		Object returnObject = null;
+		try {
+			cl = Class.forName(entityName);
+			returnObject = cl.newInstance();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw new NoSuchENtity("No Such Entity Exists " + entityName);
+		}
+		Class typeClass;
+		for(EntityColBean oneCol:data)
+		{
+			setPropertyValue(returnObject, oneCol.getFieldName(), oneCol.getFieldType(), oneCol.getFieldValue());
+		}
+		return returnObject;
+	}
+	public static String getPropertyValue(Object obj,String methodName,String type,boolean method) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException 
 	{
         Class[] cArr = null;
         Object[] objs = null;
@@ -120,24 +144,34 @@ public class ReflectionUtil {
         Method mSetExID = obj.getClass().getMethod(methodName, cArr);
 
         objs = new Object[0];
+        Object returnObject = mSetExID.invoke(obj,objs); 
+        if("java.util.Date".equals(type))
+        {
+        	SimpleDateFormat sd = new SimpleDateFormat("MMM dd, yyyy");
+        	System.out.println("Returning date");
+        	System.out.println(sd.format(returnObject));
+        	return sd.format(returnObject);
+        }
 
-        return String.valueOf(mSetExID.invoke(obj,objs));
+        return String.valueOf(returnObject);
 	}
-	public static void setPropertyValue(Object object,String propertyName,Object value) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException
+	public static void setPropertyValue(Object object,String propertyName,String type,Object value) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException, ParseException
     {
         Class[] cArr = null;
         Object[] objs = null;
         /*Get External ID */
 
-         propertyName = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        propertyName = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        System.out.println("propertyName is " + propertyName +", value is" + value);
 
+        Class typeClass = SupportedTypes.getClass(type);
         cArr = new Class[1];
-        cArr[0] = value.getClass();
+        cArr[0] = typeClass;
 
         Method mSetExID = object.getClass().getMethod("set" + propertyName, cArr);
-
         objs = new Object[1];
-        objs[0] = value;
+        objs[0] = SupportedTypes.getValue(String.valueOf(value), type);
+        System.out.println("propertyType is " + type +", value is = " + objs[0]);
 
         mSetExID.invoke(object,objs);
 
