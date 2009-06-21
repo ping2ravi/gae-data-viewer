@@ -2,27 +2,6 @@ package com.next.common.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.next.common.client.beans.EntityDefnitionBean;
-import com.next.common.client.beans.EntityDescriptionBean;
-import com.next.common.client.callback.DefaultAsyncCallback;
-import com.next.common.client.factory.ServiceFactory;
-import com.next.common.client.manager.ScreenManager;
-import com.next.common.client.panels.generic.CommonPanel;
-import com.next.common.client.session.ClientCache;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -47,6 +26,7 @@ public class GWTCommon implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		String key = "getAllEntities";
+		/*
 		DefaultAsyncCallback<EntityDescriptionBean[]> callback = new DefaultAsyncCallback<EntityDescriptionBean[]>(key){
 			@Override
 			public void onServiceFailure(Throwable caught) {
@@ -61,5 +41,6 @@ public class GWTCommon implements EntryPoint {
 			}
 		};
 		ServiceFactory.getDBService().getAllEntities(callback);
+		*/
 	}
 }

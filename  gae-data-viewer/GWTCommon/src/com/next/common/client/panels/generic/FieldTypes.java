@@ -4,6 +4,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class FieldTypes {
 
@@ -40,7 +41,8 @@ public class FieldTypes {
 		}
 		if(DATE_PICKER_BOX.equals(type))
 		{
-			MyDatePicker returnWidget = new MyDatePicker();
+			//DateBox returnWidget = new DateBox();
+			DateBox returnWidget = new DateBox();
 			returnWidget.setEnabled(enabled);
 			return returnWidget;
 		}
@@ -69,8 +71,8 @@ public class FieldTypes {
 		}
 		if(DATE_PICKER_BOX.equals(type))
 		{
-			MyDatePicker returnWidget = (MyDatePicker)widget;
-			return returnWidget.getDate();
+			DateBox returnWidget = (DateBox)widget;
+			return returnWidget.getTextBox().getText();
 		}
 		Window.alert("Error : Type " + type+" is not supported");
 		return null;
@@ -100,8 +102,8 @@ public class FieldTypes {
 		}
 		if(DATE_PICKER_BOX.equals(type))
 		{
-			MyDatePicker returnWidget = (MyDatePicker)widget;
-			returnWidget.clear();
+			DateBox returnWidget = (DateBox)widget;
+			returnWidget.getTextBox().setText("");
 			return ;
 		}
 		Window.alert("Error : Type " + type+" is not supported");
@@ -149,8 +151,8 @@ public class FieldTypes {
 		}
 		if(DATE_PICKER_BOX.equals(type))
 		{
-			MyDatePicker returnWidget = (MyDatePicker)widget;
-			returnWidget.setDate(value);
+			DateBox returnWidget = (DateBox)widget;
+			returnWidget.getTextBox().setText(value);
 			return ;
 		}
 		Window.alert("Error : Type " + type+" is not supported");

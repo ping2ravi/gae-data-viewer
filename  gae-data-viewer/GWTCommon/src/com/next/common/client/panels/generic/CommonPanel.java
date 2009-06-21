@@ -22,12 +22,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.next.common.client.beans.EntityColBean;
-import com.next.common.client.beans.EntityColDefinitionBean;
-import com.next.common.client.beans.EntityDescriptionBean;
-import com.next.common.client.factory.ServiceFactory;
-import com.next.common.client.panels.EntityPanel;
-import com.next.common.client.session.ClientCache;
 
 public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 
@@ -57,6 +51,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	public abstract boolean validateObject(Object obj,UiErrorPanel parentPanel);
 	public abstract void onSave(Object object);
 	public abstract void findData(Map searchData);
+	public abstract void deleteData(FlexTable resultTable);
 	public FieldsBean[] getFields() {
 		return fields;
 	}
@@ -160,6 +155,8 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		}
 		if(event.getSource().equals(deleteButton))
 		{
+			deleteData(resultGrid);
+			/*
 			if(resultGrid != null)
 			{
 				int totalRows = resultGrid.getRowCount()-1;
@@ -210,7 +207,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 					});
 					
 				}
-			}
+			}*/
 		}
 		if(sender.equals(newButton))
 		{
@@ -242,6 +239,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		}
 		
 	}
+	/*
 	private EntityColBean getKeyValuefromRow(int row)
 	{
 		EntityDescriptionBean bean = ClientCache.getEntityCache(this.objectName);
@@ -268,6 +266,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		}
 		return returnValue;
 	}
+	*/
 	public Map<String, String> getSearchParams() {
 		Map<String, String> allParamList = new HashMap<String, String>();
 		if(fields == null || fields.length <= 0)

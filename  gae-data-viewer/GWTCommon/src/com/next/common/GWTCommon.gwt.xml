@@ -14,5 +14,5 @@
   <!-- Other module inherits                                      -->
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='com.next.common.client.GWTCommon'/>
+  <!--  <entry-point class='com.next.common.client.GWTCommon'/>-->
 </module>
