@@ -7,7 +7,9 @@ Add your content here.
 
 = Details =
 1) Download GWTCommon.jar and NextDataViewer.jar and put them in lib folder of your GWT project.
+
 *Client Side setup*
+
 2) Create a html where you want to see the  NextDataViewer. Make sure you add following line in your html
      <div id="NextDataViewerContent"></div>
 
@@ -17,6 +19,7 @@ Put following line in you GWT project's .gwt.xml file
 
 
 *Server Side setup*
+
 3) Create a controller extending the class, com.next.viewer.server.DBServiceAbstract.
 
    Implement the abtract method 
