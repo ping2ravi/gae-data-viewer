@@ -1,5 +1,8 @@
 This page describes how you can install the Next Data Viewer for your application to see data locally as well as on  Google App Engine
 
+= Currently i am working on this project, will be available around july first week =
+You can star the issue http://code.google.com/p/gae-data-viewer/issues/detail?id=1 and you will be notified once this tool is available.
+
 = Introduction =
 
 Add your content here.
