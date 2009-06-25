@@ -91,6 +91,12 @@ public class FieldTypes {
 			returnWidget.setEnabled(enabled);
 			return returnWidget;
 		}
+		if(com.next.common.client.data.types.Key.class.getName().equals(type))
+		{
+			TextBox returnWidget = new TextBox();
+			returnWidget.setEnabled(enabled);
+			return returnWidget;
+		}
 
 		/*
 		if(TEXT_BOX.equals(type))
@@ -174,6 +180,11 @@ public class FieldTypes {
 			return returnWidget.getTextBox().getText();
 		}
 		if(java.lang.String.class.getName().equals(type))
+		{
+			TextBox textBox = (TextBox)widget;
+			return textBox.getText();
+		}
+		if(com.next.common.client.data.types.Key.class.getName().equals(type))
 		{
 			TextBox textBox = (TextBox)widget;
 			return textBox.getText();
@@ -263,6 +274,12 @@ public class FieldTypes {
 			return ;
 		}
 		if(java.lang.String.class.getName().equals(type))
+		{
+			TextBox textBox = (TextBox)widget;
+			textBox.setText("");
+			return;
+		}
+		if(com.next.common.client.data.types.Key.class.getName().equals(type))
 		{
 			TextBox textBox = (TextBox)widget;
 			textBox.setText("");
@@ -364,6 +381,12 @@ public class FieldTypes {
 			return ;
 		}
 		if(java.lang.String.class.getName().equals(type))
+		{
+			TextBox textBox = (TextBox)widget;
+			textBox.setText(value);
+			return;
+		}
+		if(com.next.common.client.data.types.Key.class.getName().equals(type))
 		{
 			TextBox textBox = (TextBox)widget;
 			textBox.setText(value);
