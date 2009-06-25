@@ -1,6 +1,7 @@
 package com.next.common.client.manager.helper;
 
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class WorkingPopupWindow {
@@ -14,6 +15,8 @@ public class WorkingPopupWindow {
 	private void createLoadMask(String message) {	
 		//loadMask = new LoadMask(RootPanel.getBodyElement(), message);
 		loadMask = new DecoratedPopupPanel();
+		loadMask.center();
+		loadMask.add(new HTML(message));
 		loadMask.show();
 	}
 	
