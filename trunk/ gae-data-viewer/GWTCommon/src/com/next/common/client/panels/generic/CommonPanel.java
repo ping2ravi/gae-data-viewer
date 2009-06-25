@@ -50,7 +50,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	public abstract Object getObjectFromParams(Map<String, String> params);
 	public abstract boolean validateObject(Object obj,UiErrorPanel parentPanel);
 	public abstract void onSave(Object object);
-	public abstract void findData(Map searchData);
+	public abstract void findData(Map<String,String> searchData);
 	public abstract void deleteData(FlexTable resultTable);
 	public FieldsBean[] getFields() {
 		return fields;
@@ -94,12 +94,12 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 				col = 0;
 				row++;
 			}
-			//Window.alert("Row " + row+",Col="+col);
 			widget = new Label(fields[i].getLabelText());
 			allControls.setWidget(row, col, widget);
 			col++;
 			widget = FieldTypes.getWidget(fields[i].getType(),fields[i].isEnabled());
 			searchElements.put(fields[i].getFieldName(), widget);
+			/*
 			if(FieldTypes.LIST_BOX.equals(fields[i].getType()))
 			{
 				if(fields[i].getListBoxPopulator() != null)
@@ -117,7 +117,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			{
 				((TextBox)widget).setEnabled(true);
 			}
-			
+			*/
 			allControls.setWidget(row, col, widget);
 			col++;
 		}
@@ -140,18 +140,10 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		}
 		if(sender.equals(this.search))
 		{
-			//if(UserInfo.getInstance().isUserAllowedForOperation("find" + objectName +"s"))
-			//{
-				resultPanel.clear();
-				resultPanel.add(new Label("Searching Data"));
-				Map<String, String> params = getSearchParams();
-				findData(params);
-			/*}
-			else
-			{
-				Window.alert("You are not authorized to do this operation");
-			}
-             */
+			resultPanel.clear();
+			resultPanel.add(new Label("Searching Data"));
+			Map<String, String> params = getSearchParams();
+			findData(params);
 		}
 		if(event.getSource().equals(deleteButton))
 		{
