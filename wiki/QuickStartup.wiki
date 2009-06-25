@@ -9,7 +9,7 @@ Add your content here.
 
 
 = Details =
-1) Download GWTCommon.jar and NextDataViewer.jar and put them in lib folder of your GWT project.
+1) Download "GWTCommon.jar"and "NextDataViewer.jar" and put them in lib folder of your GWT project.
 
 *Client Side setup*
 
