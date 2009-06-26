@@ -70,8 +70,19 @@ Here go to Admin and click on entity , it will display like this
 [http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/EntityDef.JPG]
 
 
-Then clcik on create
+Then click on create
+
 [http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/EntityDefinitionEmpty.JPG]
+
+Enter Entity class name as your project's entity class which you deployed with this project e.g. com.next.data.viewer.server.entity.Customer
+
+[http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/EntityDefinitionFilled.JPG]
+
+
+once entity name entered it will populate the primary key field combo box, choose your entity's primary key and click save.
+To close the box click cancel after saving.
+
+Then you can search your entity, just hit the search button and it will show you your entity you just created.
 
 
 Add your content here.  Format your content with:
