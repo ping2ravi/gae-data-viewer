@@ -14,7 +14,7 @@ Add your content here.
 *Client Side setup*
 
 2) Create a html where you want to see the  NextDataViewer. Make sure you add following line in your html
-     <div id="NextDataViewerContent"></div>
+     &lt;div id="NextDataViewerContent" /&gt;
 
 3) Inherit the GWT project
 Put following line in you GWT project's .gwt.xml file
