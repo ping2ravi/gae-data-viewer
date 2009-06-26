@@ -86,6 +86,14 @@ Then you can search your entity, just hit the search button and it will show you
 
 [http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/EntitySearch.JPG]
 
+
+Now refresh your page by pressing F5 or clicking refresh button on your browser(working on this, so you dont need to refresh, please bear with me for some time). Now your entities will come under Entities menu
+
+[http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/AllEntities.JPG]
+
+Click on any of Entity and you will be able to do Insert/Update/Delete/Search operation on it.
+
+
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
   * Headings, paragraphs, and lists
