@@ -84,6 +84,7 @@ To close the box click cancel after saving.
 
 Then you can search your entity, just hit the search button and it will show you your entity you just created.
 
+[http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/EntitySearch.JPG]
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
