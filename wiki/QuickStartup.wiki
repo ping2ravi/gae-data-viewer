@@ -66,6 +66,14 @@ http://<your application>.appspot.com/<html you created in step 2, you may need 
 this url will display something like this
 [http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/first.JPG]
 
+Here go to Admin and click on entity , it will display like this
+[http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/EntityDef.JPG]
+
+
+Then clcik on create
+[http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/EntityDefinitionEmpty.JPG]
+
+
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
   * Headings, paragraphs, and lists
