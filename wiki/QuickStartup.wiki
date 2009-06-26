@@ -64,7 +64,7 @@ http://localhost:8080/<your application>/<html you created in step 2, you may ne
 http://<your application>.appspot.com/<html you created in step 2, you may need to adjust the path depedning on your project struture>
 
 this url will display something like this
-
+[http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/first.JPG]
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
