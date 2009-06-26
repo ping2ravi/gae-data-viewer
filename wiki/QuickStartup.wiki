@@ -14,12 +14,15 @@ Add your content here.
 *Client Side setup*
 
 2) Create a html where you want to see the  NextDataViewer. Make sure you add following line in your html
-     &lt;div id="NextDataViewerContent" /&gt;
+{{{
+     <div id="NextDataViewerContent" ></div>
+}}}
 
 3) Inherit the GWT project
 Put following line in you GWT project's .gwt.xml file
+{{{
 <inherits name='com.next.viewer.NextDataViewer'/>
-
+}}}
 
 *Server Side setup*
 
@@ -29,15 +32,16 @@ Put following line in you GWT project's .gwt.xml file
    public Object getPersistanceManagerFactory().
 
 If you follow the google's example to create the PersistanceManagerFactory for JDO object then implentaion of this class/function will be something like this
-
+{{{
 package com.mypackage.server;
+
 Class MyControllerClass extends DBServiceAbstract{
 	@Override
 	public Object getPersistanceManagerFactory() {
 		return PMF.get();
 	}
 }
-
+}}}
 4) Update your web.xml. Add the following code
   <servlet>
     <servlet-name>DBServlet</servlet-name>
