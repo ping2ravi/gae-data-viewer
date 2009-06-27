@@ -96,12 +96,18 @@ public class CommonSavePanel extends DecoratedPopupPanel implements UiErrorPanel
 		{
 			
 			widget = elements.get(fields[i].getFieldName());
+			if(!FieldTypes.validateWidgetValue(fields[i].getType(),widget))
+			{
+				setErrorMessage("There is problem with field " + fields[i].getLabelText());
+				return;
+			}
 			value = FieldTypes.getWidgetValue(fields[i].getType(),widget);
 			data.put(fields[i].getFieldName(),value);
 		}		
 		Object obj = panel.getObjectFromParams(data);
 		if(panel.validateObject(obj,this))
 		{
+			setErrorMessage("");
 			panel.onSave(obj);
 		}
 	}
