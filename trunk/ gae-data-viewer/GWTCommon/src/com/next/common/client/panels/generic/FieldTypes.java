@@ -1,7 +1,10 @@
 package com.next.common.client.panels.generic;
 
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -126,8 +129,9 @@ public class FieldTypes {
 			returnWidget.setEnabled(enabled);
 			return returnWidget;
 		}*/
-		Window.alert("Error : Type " + type+" is not supported");
-		return null;
+		//Window.alert("Error : Type " + type+" is not supported");
+		Label returnWidget = new Label("Type Not supported");
+		return returnWidget;
 		
 	}
 	public static String getWidgetValue(String type,Widget widget)
@@ -211,7 +215,7 @@ public class FieldTypes {
 			return returnWidget.getTextBox().getText();
 		}
 		*/
-		Window.alert("Error : Type " + type+" is not supported");
+		//Window.alert("Error : Type " + type+" is not supported");
 		return null;
 		
 	}	
@@ -310,7 +314,7 @@ public class FieldTypes {
 			returnWidget.getTextBox().setText("");
 			return ;
 		}*/
-		Window.alert("Error : Type " + type+" is not supported");
+		//Window.alert("Error : Type " + type+" is not supported");
 		
 	}	
 	public static void setWidgetValue(String type,Widget widget,String value)
@@ -435,7 +439,95 @@ public class FieldTypes {
 			returnWidget.getTextBox().setText(value);
 			return ;
 		}*/
-		Window.alert("Error : Type " + type+" is not supported");
+		//Window.alert("Error : Type " + type+" is not supported");
+		
+	}	
+	public static boolean validateWidgetValue(String type,Widget widget)
+	{
+		if(type == null )
+			Window.alert("Type can not be null");
+		if(byte.class.getName().equals(type) || Byte.class.getName().equals(type))
+		{
+			ByteTextBox textBox = (ByteTextBox)widget;
+			return textBox.validate();
+		}
+		if(short.class.getName().equals(type) || Short.class.getName().equals(type))
+		{
+			ShortTextBox textBox = (ShortTextBox)widget;
+			return textBox.validate();
+		}
+		if(int.class.getName().equals(type) || Integer.class.getName().equals(type))
+		{
+			IntegerTextBox textBox = (IntegerTextBox)widget;
+			return textBox.validate();
+		}
+		if(long.class.getName().equals(type) || Long.class.getName().equals(type))
+		{
+			LongTextBox textBox = (LongTextBox)widget;
+			return textBox.validate();
+		}
+		if(float.class.getName().equals(type) || Float.class.getName().equals(type))
+		{
+			FloatTextBox textBox = (FloatTextBox)widget;
+			return textBox.validate();
+		}
+		if(double.class.getName().equals(type) || Double.class.getName().equals(type))
+		{
+			DoubleTextBox textBox = (DoubleTextBox)widget;
+			return textBox.validate();
+		}
+		if(boolean.class.getName().equals(type) || Boolean.class.getName().equals(type))
+		{
+			ListBox listBox = (ListBox)widget;
+			return true;//listBox.getValue(listBox.getSelectedIndex());
+		}
+		if(char.class.getName().equals(type) || Character.class.getName().equals(type))
+		{
+			CharTextBox textBox = (CharTextBox)widget;
+			return textBox.validate();
+		}
+		if(java.util.Date.class.getName().equals(type))
+		{
+			DateBox returnWidget = (DateBox)widget;
+			Date date = returnWidget.getValue();
+			if(date == null && !returnWidget.getTextBox().getText().trim().equals(""))
+				return false;
+			return true;
+		}
+		if(java.lang.String.class.getName().equals(type))
+		{
+			TextBox textBox = (TextBox)widget;
+			return true;
+		}
+		if(com.next.common.client.data.types.Key.class.getName().equals(type))
+		{
+			TextBox textBox = (TextBox)widget;
+			return true;
+		}
+		/*
+		if(TEXT_BOX.equals(type))
+		{
+			TextBox textBox = (TextBox)widget;
+			return textBox.getText();
+		}
+		if(LIST_BOX.equals(type))
+		{
+			ListBox listBox = (ListBox)widget;
+			return listBox.getValue(listBox.getSelectedIndex());
+		}
+		if(BOOLEAN_LIST_BOX.equals(type))
+		{
+			ListBox listBox = (ListBox)widget;
+			return listBox.getValue(listBox.getSelectedIndex());
+		}
+		if(DATE_PICKER_BOX.equals(type))
+		{
+			DateBox returnWidget = (DateBox)widget;
+			return returnWidget.getTextBox().getText();
+		}
+		*/
+		//Window.alert("Error : Type " + type+" is not supported");
+		return true;
 		
 	}	
 }

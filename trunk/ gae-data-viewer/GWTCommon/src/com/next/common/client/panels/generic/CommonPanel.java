@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -22,8 +24,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.next.common.client.beans.PageData;
+import com.next.common.client.beans.PageInfoBean;
 
-public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
+public abstract class CommonPanel extends VerticalPanel implements ClickHandler,ChangeHandler{
 
 	protected CommonSavePanel savePanel;	
 	private FieldsBean[] fields;
@@ -36,6 +40,14 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	protected String objectName;
 	private FlexTable resultGrid;
 	private VerticalPanel resultPanel;
+	private HorizontalPanel nextPreviousPanel;
+	private Button nextButton;
+	private Button previousButton;
+	private HTML pageInfoArea;
+	private HTML pageSizeArea;
+	private TextBox pageSize;
+	private Map<Long, PageData> pageDataCache;
+	protected PageInfoBean pageInfo = null;
 	public CommonPanel(String objectName)
 	{
 		this.objectName = objectName;
@@ -50,7 +62,7 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 	public abstract Object getObjectFromParams(Map<String, String> params);
 	public abstract boolean validateObject(Object obj,UiErrorPanel parentPanel);
 	public abstract void onSave(Object object);
-	public abstract void findData(Map<String,String> searchData);
+	public abstract void findData(Map<String,String> searchData,PageInfoBean pageInfo);
 	public abstract void deleteData(FlexTable resultTable);
 	public FieldsBean[] getFields() {
 		return fields;
@@ -121,13 +133,40 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 			allControls.setWidget(row, col, widget);
 			col++;
 		}
+		nextPreviousPanel = new HorizontalPanel();
+		nextButton = new Button(">");
+		previousButton = new Button("<");
+		pageInfoArea = new HTML();
+		nextButton.addClickHandler(this);
+		nextButton.setEnabled(false);
+		previousButton.addClickHandler(this);
+		previousButton.setEnabled(false);
+		pageSizeArea = new HTML("Page size");
+		pageSize = new TextBox();
+		pageSize.addChangeHandler(this);
+		pageSize.setText("50");
+		pageSize.setWidth("70px");
+
+		nextPreviousPanel.add(previousButton);
+		nextPreviousPanel.add(pageInfoArea);
+		nextPreviousPanel.add(nextButton);
+		nextPreviousPanel.add(pageSizeArea);
+		nextPreviousPanel.add(pageSize);
 		
 		resultPanel = new VerticalPanel();
+		resultPanel.add(nextPreviousPanel);
+		
+		pageDataCache = new HashMap<Long, PageData>();
+		
 		Grid searchPannel = new Grid(4, 1);
 		searchPannel.setWidget(0,0, errorText);
 		searchPannel.setWidget(1, 0, allControls);
 		searchPannel.setWidget(2, 0, allButtonPanel);
 		searchPannel.setWidget(3, 0, resultPanel);
+		
+		pageInfo = new PageInfoBean();
+		pageInfo.setPageNum(1);
+		pageInfo.setPageSize(50);
 		
 		this.add(searchPannel);
 	}
@@ -141,9 +180,11 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		if(sender.equals(this.search))
 		{
 			resultPanel.clear();
+			pageDataCache.clear();
 			resultPanel.add(new Label("Searching Data"));
 			Map<String, String> params = getSearchParams();
-			findData(params);
+			pageInfo.setPageNum(1);
+			findData(params,pageInfo);
 		}
 		if(event.getSource().equals(deleteButton))
 		{
@@ -200,6 +241,39 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 					
 				}
 			}*/
+		}
+		if(sender.equals(nextButton))
+		{
+			resultPanel.clear();
+			resultPanel.add(new Label("Searching Data"));
+			pageInfo.setPageNum(pageInfo.getPageNum() + 1);
+			PageData pageData = pageDataCache.get(pageInfo.getPageNum());
+			if(pageData == null)
+			{
+				Map<String, String> params = getSearchParams();
+				findData(params,pageInfo);
+			}
+			else
+			{
+				findServiceSuccess(pageData.getData(), pageData.getHeader(), pageData.getPageInfo());
+			}
+		}
+		if(sender.equals(previousButton))
+		{
+			resultPanel.clear();
+			resultPanel.add(new Label("Searching Data"));
+			if(pageInfo.getPageNum() > 1)
+				pageInfo.setPageNum(pageInfo.getPageNum() - 1);
+			PageData pageData = pageDataCache.get(pageInfo.getPageNum());
+			if(pageData == null)
+			{
+				Map<String, String> params = getSearchParams();
+				findData(params,pageInfo);
+			}
+			else
+			{
+				findServiceSuccess(pageData.getData(), pageData.getHeader(), pageData.getPageInfo());
+			}
 		}
 		if(sender.equals(newButton))
 		{
@@ -290,9 +364,27 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		resultPanel.add(new Label("Error occured at server"));
 		deleteButton.setEnabled(false);
 	}
-	public void findServiceSuccess(String[][] data,String[] header)
+	public void findServiceSuccess(String[][] data,String[] header,PageInfoBean resultPageInfo)
 	{
 		resultPanel.clear();
+		PageData pageData = new PageData();
+		pageData.setData(data);
+		pageData.setHeader(header);
+		pageData.setPageInfo(resultPageInfo);
+		if(resultPageInfo != null)
+		{
+			pageDataCache.put(resultPageInfo.getPageNum(), pageData);
+			if(resultPageInfo.getPageNum() <= 1)
+				previousButton.setEnabled(false);
+			else
+				previousButton.setEnabled(true);
+			pageInfoArea.setHTML("Page "+resultPageInfo.getPageNum() +" of ?");
+			if(data == null || data.length < resultPageInfo.getPageSize())
+				nextButton.setEnabled(false);
+			else
+				nextButton.setEnabled(true);
+		}
+		resultPanel.add(nextPreviousPanel);
 		deleteButton.setEnabled(true);
 		if(resultGrid == null)
 		{
@@ -321,4 +413,24 @@ public abstract class CommonPanel extends VerticalPanel implements ClickHandler{
 		resultPanel.add(resultGrid);
 	}
 
+	public void onChange(ChangeEvent event)
+	{
+		if(event.getSource().equals(pageSize))
+		{
+			long size = 0;
+			try{
+				size = Long.parseLong(pageSize.getText());
+			}catch(Exception ex){
+				pageSize.setText("50");
+				size = 50;
+			}
+			if(size <= 0 || size > 1000)
+			{
+				Window.alert("Page Size should be between 1, 1000. Setting it to default 50");
+				pageSize.setText("50");
+				size = 50;
+			}
+			pageInfo.setPageSize(size);
+		}
+	}
 }
