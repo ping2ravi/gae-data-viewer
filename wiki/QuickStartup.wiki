@@ -7,7 +7,8 @@ Runnign demo of this application can be found at http://gaedataviewer.appspot.co
 
 = Introduction =
 Using this simple tool you can quickly add CRUD access to your JDO object with in seconds.
-Try it your self its very simple. I hope this will help GAE communtiy
+Try it your self its very simple. I hope this will help GAE communtiy.
+Currently i am working on Import/Export feature. Will be available shortly.
 
 
 = Details =
