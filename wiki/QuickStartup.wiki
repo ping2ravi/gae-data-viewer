@@ -1,15 +1,17 @@
 This page describes how you can install the Next Data Viewer for your application to see data locally as well as on  Google App Engine
 
-= Currently i am working on this project, will be available around july first week =
-You can star the issue http://code.google.com/p/gae-data-viewer/issues/detail?id=1 and you will be notified once this tool is available.
+Runnign demo of this application can be found at http://gaedataviewer.appspot.com/
+
+
+= if you ahve any issue feel free to post here http://code.google.com/p/gae-data-viewer/issues
 
 = Introduction =
-
-Add your content here.
+Using this simple tool you can quickly add CRUD access to your JDO object with in seconds.
+Try it your slef its very simple. I hope this will help GAE communtiy
 
 
 = Details =
-1) Download "GWTCommon.jar"and "NextDataViewer.jar" and put them in lib folder of your GWT project.
+1) Download "GWTCommon.jar"and "NextDataViewer.jar" from http://code.google.com/p/gae-data-viewer/downloads/list and put them in lib folder of your GWT project.
 
 *Client Side setup*
 
@@ -92,9 +94,3 @@ Now refresh your page by pressing F5 or clicking refresh button on your browser(
 [http://code.google.com/p/gae-data-viewer http://gae-data-viewer.googlecode.com/files/AllEntities.JPG]
 
 Click on any of Entity and you will be able to do Insert/Update/Delete/Search operation on it.
-
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
