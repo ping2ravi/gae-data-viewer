@@ -50,7 +50,7 @@ Class MyControllerClass extends DBServiceAbstract{
   </servlet>
     <servlet-mapping>
         <servlet-name>DBServlet</servlet-name>
-        <url-pattern>/<your application context>/dbviewer</url-pattern>
+        <url-pattern>/<your application context>/dataviewer</url-pattern>
     </servlet-mapping>
 }}}
 
