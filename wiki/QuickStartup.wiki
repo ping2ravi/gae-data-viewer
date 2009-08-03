@@ -20,6 +20,7 @@ Currently i am working on Import/Export feature. Will be available shortly.
 {{{
      <div id="NextDataViewerContent" ></div>
 }}}
+make sure you are including your project's .js file in this html.
 
 3) Inherit the GWT project
 Put following line in you GWT project's .gwt.xml file
