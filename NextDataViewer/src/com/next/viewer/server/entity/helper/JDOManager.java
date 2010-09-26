@@ -27,6 +27,7 @@ public class JDOManager implements DBManager{
 	public void deleteObjectById(Class cls,Object id) {
 		Object obj = getObjectById(cls,id);
 		pm.deletePersistent(obj);
+		
 	}
 	public void deleteObject(Object obj) {
 		pm.deletePersistent(obj);
@@ -155,6 +156,11 @@ public class JDOManager implements DBManager{
 		if(fieldName.startsWith("class"))
 			return fieldName.substring(6);
 		return fieldName;
+	}
+	@Override
+	public void deleteAllObject(List<Object> objs) {
+		pm.deletePersistentAll(objs);
+		
 	}
 	
 }

@@ -107,24 +107,24 @@ public abstract class DBServiceAbstract extends RemoteServiceServlet implements 
 	public EntityColBean[] deleteEntityData(String entityName,EntityColBean[] entities) throws ClientException {
 		DBManager dbManager = null;
 		System.out.println("Start");
-		try{
+		for(EntityColBean oneEntityKey:entities)
+		{
+			try{
 			dbManager = getDBManager();
 			GenericEntityHelper geh = GenericEntityHelper.getInstance();
-			for(EntityColBean oneEntityKey:entities)
-			{
-				Object dbEntityKey = ReflectionUtil.getEntityKey(entityName,oneEntityKey);
-				if(dbEntityKey == null)
-					throw new ClientException("Data type not supported for PK field");
-				System.out.println("deleting Object " + dbEntityKey);
-				geh.deleteGenericEntity(dbManager, entityName, dbEntityKey);
-			}
+			Object dbEntityKey = ReflectionUtil.getEntityKey(entityName,oneEntityKey);
+			if(dbEntityKey == null)
+				throw new ClientException("Data type not supported for PK field");
+			System.out.println("deleting Object " + dbEntityKey);
+			geh.deleteGenericEntity(dbManager, entityName, dbEntityKey);
 			System.out.println("Finished Deleting ");
 			dbManager.commitTransaction();
-		}catch(Exception ex)
-		{
-			ex.printStackTrace();
-			dbManager.rollbackTransaction();
-			throw new ClientException(ex);
+			}catch(Exception ex)
+			{
+				ex.printStackTrace();
+				dbManager.rollbackTransaction();
+				throw new ClientException(ex);
+			}
 		}
 		return entities;
 	}

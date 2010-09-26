@@ -182,57 +182,65 @@ public class GenericPanel extends CommonPanel{
     }
 	@Override
 	public void deleteData(final FlexTable resultGrid) {
-		
-		if(resultGrid != null)
-		{
-			int totalRows = resultGrid.getRowCount()-1;
-			CheckBox checkBox;
-			List<EntityColBean> allDeletedData = new ArrayList<EntityColBean>();
-			for(int i=totalRows;i>=1;i--)
+		try{
+			if(resultGrid != null)
 			{
-				checkBox = (CheckBox)resultGrid.getWidget(i, 0);
-				EntityColBean oneEntityKey;
-				String key;
-				if(checkBox.getValue())
+				int totalRows = resultGrid.getRowCount()-1;
+				CheckBox checkBox;
+				List<EntityColBean> allDeletedData = new ArrayList<EntityColBean>();
+				for(int i=totalRows;i>=1;i--)
 				{
-					oneEntityKey = getKeyValuefromRow(i,resultGrid);
-					allDeletedData.add(oneEntityKey);
+					checkBox = (CheckBox)resultGrid.getWidget(i, 0);
+					if(checkBox == null)
+					{
+						continue;
+					}
+					EntityColBean oneEntityKey;
+					if(checkBox.getValue())
+					{
+						oneEntityKey = getKeyValuefromRow(i,resultGrid);
+						allDeletedData.add(oneEntityKey);
+					}
+				}
+				if(allDeletedData.size() <= 0)
+					Window.alert("No Records Selected");
+				else
+				{
+					
+					ServiceFactory.getDBService().deleteEntityData(this.objectName,(EntityColBean[])allDeletedData.toArray(new EntityColBean[0]), new AsyncCallback<EntityColBean[]>(){
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Error "+ caught);
+						}
+
+						@Override
+						public void onSuccess(EntityColBean[] result) {
+							int totalRows = resultGrid.getRowCount()-1;
+							Window.alert(result.length + " Records deleted succesfully ");
+							for(int i=totalRows;i>=1;i--)
+							{
+								for(int j=0;j<result.length;j++)
+								{
+									GWT.log(result[j].getFieldValue()+":" + getKeyValuefromRow(i,resultGrid).getFieldValue(), null);
+									if(result[j].getFieldValue().equals(getKeyValuefromRow(i,resultGrid).getFieldValue()))
+									{
+										resultGrid.removeRow(i);
+										break;
+									}
+								}
+									
+							}
+						}
+						
+					});
+					
 				}
 			}
-			if(allDeletedData.size() <= 0)
-				Window.alert("No Records Selected");
-			else
-			{
-				
-				ServiceFactory.getDBService().deleteEntityData(this.objectName,(EntityColBean[])allDeletedData.toArray(new EntityColBean[0]), new AsyncCallback<EntityColBean[]>(){
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("Error "+ caught);
-					}
-
-					@Override
-					public void onSuccess(EntityColBean[] result) {
-						int totalRows = resultGrid.getRowCount()-1;
-						Window.alert(result.length + " Records deleted succesfully ");
-						for(int i=totalRows;i>=1;i--)
-						{
-							for(int j=0;j<result.length;j++)
-							{
-								GWT.log(result[j].getFieldValue()+":" + getKeyValuefromRow(i,resultGrid).getFieldValue(), null);
-								if(result[j].getFieldValue().equals(getKeyValuefromRow(i,resultGrid).getFieldValue()))
-								{
-									resultGrid.removeRow(i);
-									break;
-								}
-							}
-								
-						}
-					}
-					
-				});
-				
-			}
+		}catch(Exception ex)
+		{
+			Window.alert(ex.getMessage());
 		}
+		
 		
 	}
 	private EntityColBean getKeyValuefromRow(int row,FlexTable resultGrid)
