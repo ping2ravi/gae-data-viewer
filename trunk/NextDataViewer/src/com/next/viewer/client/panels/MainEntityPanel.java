@@ -73,47 +73,55 @@ public class MainEntityPanel extends VerticalPanel implements ClickHandler{
 		}
 		if(event.getSource().equals(delete))
 		{
-			if(resultTable != null)
-			{
-				int totalRows = resultTable.getRowCount()-1;
-				CheckBox checkBox;
-				List<String> allDeletedData = new ArrayList<String>();
-				for(int i=totalRows;i>=0;i--)
+			try{
+				if(resultTable != null)
 				{
-					checkBox = (CheckBox)resultTable.getWidget(i, 3);
-					if(checkBox.getValue())
+					int totalRows = resultTable.getRowCount()-1;
+					CheckBox checkBox;
+					List<String> allDeletedData = new ArrayList<String>();
+					for(int i=totalRows;i>=0;i--)
 					{
-						allDeletedData.add(resultTable.getText(i, 0));
-						resultTable.removeRow(i);
+						checkBox = (CheckBox)resultTable.getWidget(i, 3);
+						if(checkBox == null)
+							continue;
+						if(checkBox.getValue())
+						{
+							allDeletedData.add(resultTable.getText(i, 0));
+							resultTable.removeRow(i);
+						}
+					}
+					if(allDeletedData.size() <= 0)
+						Window.alert("No Records Selected");
+					else
+					{
+						ServiceFactory.getDBService().deleteEntity((String[])allDeletedData.toArray(new String[0]), new AsyncCallback<String[]>(){
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert("Error "+ caught);
+							}
+		
+							@Override
+							public void onSuccess(String[] result) {
+								int totalRows = resultTable.getRowCount()-1;
+								for(int i=totalRows;i>=0;i--)
+								{
+									for(int j=0;j<result.length;j++)
+									{
+										if(result[j].equals(resultTable.getText(i, 0)))
+											resultTable.removeRow(i);
+									}
+										
+								}
+							}
+							
+						});
 					}
 				}
-				if(allDeletedData.size() <= 0)
-					Window.alert("No Records Selected");
-				else
-				{
-					ServiceFactory.getDBService().deleteEntity((String[])allDeletedData.toArray(new String[0]), new AsyncCallback<String[]>(){
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert("Error "+ caught);
-						}
-	
-						@Override
-						public void onSuccess(String[] result) {
-							int totalRows = resultTable.getRowCount()-1;
-							for(int i=totalRows;i>=0;i--)
-							{
-								for(int j=0;j<result.length;j++)
-								{
-									if(result[j].equals(resultTable.getText(i, 0)))
-										resultTable.removeRow(i);
-								}
-									
-							}
-						}
-						
-					});
-				}
+			}catch(Exception ex)
+			{
+				Window.alert(""+ex);
 			}
+			
 		}
 		if(event.getSource().equals(search))
 		{
