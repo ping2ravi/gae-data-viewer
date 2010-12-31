@@ -7,10 +7,13 @@ import java.lang.reflect.TypeVariable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.Key;
+import com.next.common.client.data.types.NotSupportedType;
 import com.next.viewer.client.beans.EntityColBean;
 import com.next.viewer.client.beans.EntityColDefinitionBean;
 import com.next.viewer.client.beans.EntityDataBean;
@@ -35,6 +38,7 @@ public class ReflectionUtil {
 		String returnType;
 		for(int i=0;i<allMethods.length;i++)
 		{
+			returnType = allMethods[i].getReturnType().toString();
 			if(!allMethods[i].getName().startsWith("get") && !allMethods[i].getName().startsWith("is"))
 				continue;
 			if(allMethods[i].getName().equals("getClass"))
@@ -44,10 +48,15 @@ public class ReflectionUtil {
 				oneBean.setFieldName(allMethods[i].getName().substring(3));
 			if(allMethods[i].getName().startsWith("is"))
 				oneBean.setFieldName(allMethods[i].getName().substring(2));
-			returnType = allMethods[i].getReturnType().toString();
 			if(returnType.startsWith("class "))
 				returnType = returnType.substring(6);
 			returnType = SupportedTypes.getReturnType(returnType);
+			//TODO need to fix this later
+			if(allMethods[i].getName().equals("getId")){
+				if(NotSupportedType.class.getName().equals(returnType)){
+					continue;
+				}
+			}
 			oneBean.setFieldType(returnType);
 			oneBean.setUpdateAllow(SupportedTypes.isSupported(returnType));
 			allFields.add(oneBean);
