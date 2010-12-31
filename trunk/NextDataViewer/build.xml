@@ -76,6 +76,12 @@
       <fileset file="NextDataViewer.jar"/>
     </copy>
   </target>
+ <target name="deploy-to-EducationDirectory" depends="jar" description="Create a jar file">
+    <delete file="../EducationDirectory/war/WEB-INF/lib/NextDataViewer.jar" failonerror="false" />
+    <copy todir="../EducationDirectory/war/WEB-INF/lib/">
+      <fileset file="NextDataViewer.jar"/>
+    </copy>
+  </target>
   <target name="deploy-to-dataviewer-example" depends="jar" description="Create a jar file">
     <delete file="../DataViewerExample/war/WEB-INF/lib/NextDataViewer.jar" failonerror="false" />
     <copy todir="../DataViewerExample/war/WEB-INF/lib/">
